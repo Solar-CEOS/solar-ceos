@@ -1,7 +1,6 @@
 
 # 太阳活动的合增冲减效应与行星调制的P-M-A框架
 
-
 > [English Version (英文版)](README.md)
 
 本代码库包含了论文《太阳活动的合增冲减效应与行星调制的P-M-A框架》的完整复现代码。其中包括原始数据处理、计算过程、统计分析以及论文图表的生成脚本。
@@ -120,8 +119,4 @@ mamba install pandas numpy scipy astropy astroquery sunpy scikit-learn lightgbm 
 
 # 5. 将该环境添加为 Jupyter 的内核
 python -m ipykernel install --user --name sunspot_env --display-name "Python (py312sunspot)"
-<<<<<<< HEAD
 ```
-=======
-```
->>>>>>> db5c3ada5043fecc8e268166699d990a9a1f936e
