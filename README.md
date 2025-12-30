@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Conjunctional Enhancement and Oppositional Suppression in Solar Activity and the Planetary-Modulated P-M-A Framework
 
 > [中文说明 (Chinese Version)](README_zh.md)
