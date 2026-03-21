@@ -169,7 +169,6 @@ mamba install cupy -y
 
 ## License
 
-当前目录尚未附带 `LICENSE` 文件。
+本仓库代码采用 [MIT License](LICENSE) 开源发布。
 
-- 若准备公开发布，请在仓库根目录补充正式许可证文本（例如 MIT）
-- 在补充许可证前，不建议将本仓库表述为已完成开源授权
+数据与结果图表（含 Zenodo 存档）采用 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 协议，使用时请注明来源并引用对应论文。
