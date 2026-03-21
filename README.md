@@ -163,7 +163,7 @@ mamba install cupy -y
 | 版本 | 日期 | 说明 |
 |------|------|------|
 | v1 | 2025-12 | 初版（标签 `v1-submitted`，[下载 zip](https://github.com/Solar-CEOS/solar-ceos/archive/refs/tags/v1-submitted.zip)） |
-| v2 | 2026-03 | 第二次修改版（当前 `main` 分支）：notebooks 重构为 03–05 模块，新增多行星扫描与稳健性检验 |
+| v2 | 2026-03 | 修改版（当前 `main` 分支）：notebooks 重构为 03–05 模块|
 
 查看 v1 代码：点击上方链接下载 zip，或在本地执行 `git checkout v1-submitted`，看完后用 `git checkout main` 返回。
 
