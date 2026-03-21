@@ -1,0 +1,8 @@
+Section,N_Planets,N_Subsets,N_Exceed_Best_Single,Median_Delta_vs_Best_Single,Min_Delta_vs_Best_Single,Max_Delta_vs_Best_Single
+multi_planet_summary,2,21,0,-5.83,-12.41,-0.12
+multi_planet_summary,3,35,0,-7.59,-17.52,-1.23
+multi_planet_summary,4,35,0,-9.98,-18.07,-2.62
+multi_planet_summary,5,21,0,-12.24,-17.15,-5.71
+multi_planet_summary,6,7,0,-13.98,-16.12,-8.53
+multi_planet_summary,7,1,0,-15.08,-15.08,-15.08
+multi_planet_summary,All,120,0,-8.9,-18.07,-0.12

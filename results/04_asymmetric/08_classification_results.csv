@@ -1,0 +1,17 @@
+target,burst_threshold,feature_set,n_features,cv_auc,test_auc,label
+sfi,2s,A_top3_pos,9,0.4940695235557603,0.5239731646273638,SFI (Flares) 2s A_top3_pos
+sfi,2s,B_all7_pos,21,0.48418948822699565,0.47079069336299584,SFI (Flares) 2s B_all7_pos
+sfi,2s,C_top3_full,15,0.5026260844859859,0.5196586484983314,SFI (Flares) 2s C_top3_full
+sfi,2s,D_all7_full,63,0.4825138440158542,0.48919378012606596,SFI (Flares) 2s D_all7_full
+ssn,2s,A_top3_pos,9,0.5332606674139578,0.5830171596832059,SSN (Sunspots) 2s A_top3_pos
+ssn,2s,B_all7_pos,21,0.5231463098991134,0.4659034499875899,SSN (Sunspots) 2s B_all7_pos
+ssn,2s,C_top3_full,15,0.5386994431206834,0.5878141993276021,SSN (Sunspots) 2s C_top3_full
+ssn,2s,D_all7_full,63,0.4691172667655808,0.4311404250998443,SSN (Sunspots) 2s D_all7_full
+sfi,15s,A_top3_pos,9,0.5038226761388888,0.5662446828502641,SFI (Flares) 15s A_top3_pos
+sfi,15s,B_all7_pos,21,0.4877024034614096,0.48098886279478487,SFI (Flares) 15s B_all7_pos
+sfi,15s,C_top3_full,15,0.5135433000189527,0.552092210023524,SFI (Flares) 15s C_top3_full
+sfi,15s,D_all7_full,63,0.4799682008657383,0.46558907341241934,SFI (Flares) 15s D_all7_full
+ssn,15s,A_top3_pos,9,0.5746829237442326,0.5709904257592119,SSN (Sunspots) 15s A_top3_pos
+ssn,15s,B_all7_pos,21,0.5533891091025761,0.4629941951112471,SSN (Sunspots) 15s B_all7_pos
+ssn,15s,C_top3_full,15,0.5815759417572347,0.5657882579847898,SSN (Sunspots) 15s C_top3_full
+ssn,15s,D_all7_full,63,0.49974289105545394,0.3980544383362302,SSN (Sunspots) 15s D_all7_full

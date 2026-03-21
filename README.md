@@ -1,121 +1,165 @@
-# Conjunctional Enhancement and Oppositional Suppression in Solar Activity and the Planetary-Modulated P-M-A Framework
+# Solar CEOS
 
-> [中文说明 (Chinese Version)](README_zh.md)
+太阳活动的非对称统计效应（原CEOS）研究的代码、结果图表与部分数据。
 
-This repository contains the complete reproduction code for the paper **"Conjunctional Enhancement and Oppositional Suppression in Solar Activity and the Planetary-Modulated P-M-A Framework"**. It includes raw data processing, computational procedures, statistical analysis, and scripts for generating the figures and tables presented in the manuscript.
+本仓库包含：
 
-## 1. Project Structure
+- `notebooks/` — 数据预处理、统计分析与绘图脚本 / Notebook
+- `results/` — 论文图表及对应统计输出
+- `data/` — 大文件数据目录占位，已包含新增数据 `sfi_1975-2024.csv`
 
-The project is organized into three main directories:
-- **`data/`**: Metadata and references for raw data sources.
-- **`notebooks/`**: Source code (Jupyter Notebooks) organized by analysis steps.
-- **`results/`**: Generated figures, tables, and intermediate data files.
+## 项目结构
 
-> [!IMPORTANT]
-> **Data Access (Zenodo)**
->
-> Due to GitHub file size limitations, the dataset has been deposited on Zenodo in three archives:
-> - **`data_raw_interm.zip`**: Raw data sources and intermediate cache files.
-> - **`data_ready.zip`**: Preprocessed data ready for analysis.
-> - **`results.zip`**: Generated figures and statistical tables.
->
-> **Installation**: Download all three files to your project root and **"Extract Here"** (unzip to current folder). They will automatically merge into the `data/` and `results/` directories.
->
-> - **Zenodo Repository**: *(The anonymous access link has been provided in the manuscript submission system for double-blind peer review. A public DOI will be available upon publication.)*
+```text
+.
+├── data/
+│   ├── 00_raw/                # 原始数据（占位，需下载）
+│   ├── interm/                # 中间缓存（占位，需下载）
+│   └── ready/                 # 就绪数据（需下载，仅含 sfi_1975-2024.csv）
+├── notebooks/
+│   ├── 02_data_prep/          # 数据下载与清洗（9 notebooks）
+│   ├── 03_coord_baseline/     # 坐标基准与基础图表（3 notebooks）
+│   ├── 04_asymmetric/         # CEOS 非对称效应（8 py + 6 notebooks）
+│   └── 05_multidimensional/   # 多行星扫描与稳健性（4 py + 1 notebook）
+│       └── 10_robustness_tests/   # bootstrap / null planet / tidal
+└── results/
+    ├── 03_coord_baseline/     # Fig01–Fig03 (eps + xlsx)
+    ├── 04_asymmetric/         # Fig04–Fig06 (eps + csv/xlsx)
+    │   ├── analysis/          # 补充分析图 (png)
+    │   ├── sf/                # 耀斑统计结果 (40 csv)
+    │   │   └── cache_data/    # 缓存目录占位
+    │   └── sg/                # 黑子群统计结果 (58 csv)
+    │       └── cache_data/    # 缓存目录占位
+    └── 05_multidimensional/   # Fig07–Fig09 (eps + png + csv)
+        └── 10_robustness_tests/   # 稳健性测试输出 (csv + figures/*.png)
+```
 
-## 2. Raw Data Sources
+## 模块说明
 
-The raw data used in this study was initially downloaded in May 2025. For reproducibility, it is recommended to use the snapshot data provided via the cloud link above.
+### `02_data_prep/`
 
-| Content | Source / Reference | Time Span | Official Link |
-| :--- | :--- | :--- | :--- |
-| **Sunspot Groups** | Hathaway {hathaway_solar_2015} | 1874-2024 | [Active Regions](http://solarcyclescience.com/activeregions.html) |
-| **Sunspot Number (SSN)** | WDC-SILSO {clette_silso_2015} | 1749-2025 | [SILSO Data](https://www.sidc.be/SILSO/datafiles) |
-| **Solar Flares** | NOAA GOES / NGDC | 1975-2017 | [NOAA XRS](https://www.ngdc.noaa.gov/stp/space-weather/solar-data/solar-features/solar-flares/x-rays/goes/xrs/) |
-| **CMEs** | NASA CDAW {Yashiro2004} | 1996-2025 | [SOHO/LASCO](https://cdaw.gsfc.nasa.gov/CME_list/halo/halo.html) |
-| **Planetary Ephemerides** | NASA JPL Horizons {giorgini1996} | 1849-2050 | [JPL SSD](https://ssd.jpl.nasa.gov/sb/) |
+数据下载、清洗、融合与生命周期标记（9 个 notebook，按编号顺序执行）。
 
-## 3. Code Description (Notebooks)
+| 编号 | 文件 | 用途 |
+|------|------|------|
+| 01 | `01_download_ssn_sg.ipynb` | 下载黑子数与黑子群数据 |
+| 02 | `02_download_flare.ipynb` | 下载耀斑数据 |
+| 03 | `03_download_ephemeris.ipynb` | 下载星历数据 |
+| 04 | `04_merge_planets_satellites_lonlat.ipynb` | 合并行星/卫星位置（经纬度） |
+| 05 | `05_merge_781_planets_dwarfs_asteroids_parquet.ipynb` | 合并 781 个行星/矮行星/小天体 |
+| 06 | `06_validate_sg_coords.ipynb` | 黑子群坐标校验 |
+| 07 | `07_classify_sg_lifecycle.ipynb` | 黑子群生命周期分类 |
+| 08 | `08_table1_sg_lifecycle_stats.ipynb` | Table 1: 生命周期统计 |
+| 09 | `09_clean.ipynb` | 数据清洗收尾 |
 
-The codebase is split into 5 modules corresponding to the sections of the paper.
-Each `.ipynb` notebook contains the complete analysis logic and outputs. While GitHub can render notebooks directly, it is recommended to download and run them locally for large files or complex interactive figures.
+### `03_coord_baseline/`
 
-### 3.1 `notebooks/01_data_prep` (Data Source & Preprocessing)
-- **Paper Section**: §2 (Data Sources & Preprocessing) & §3 (Statistical Challenges)
-- **Core Functions**:
-  - Download raw scientific data (SSN, Flare, Ephemeris).
-  - Perform data cleaning and standardization:
-    - **Sunspot Group Lifecycle Marking**: Distinguish between Onset, Diss (Dissipation, Phase-Locked), Dur (Duration), and Daily stages (Table 1).
-    - **Effective Sample Size ($N_{eff}$) Calculation**: Evaluate time series autocorrelation ($\rho_1$) and correct degrees of freedom.
+坐标系基准、几何伪影控制与基础图表。
 
-### 3.2 `notebooks/02_carr_vs_eclip_dist` (Coordinate System Geometric Baseline)
-- **Paper Section**: §4 (Impact of Coordinate System Choice on Spatial Statistics)
-- **Core Functions**:
-  - Compare **Heliographic** vs. **Heliocentric Ecliptic** coordinate systems.
-  - **Phase Locking Analysis (Fig01)**: Reveals non-physical clustering of decaying spots in the Heliographic frame, verifying the isotropic baseline of the Ecliptic frame.
-  - **North-South Asymmetry (Fig02)**: Uses CUSUM curves to demonstrate how the Ecliptic frame eliminates the 1-year periodic geometric systemic bias (Rosenberg-Coleman Effect) introduced by $B_0$ variation.
-  - **Statistical Tests (Table 2)**: Includes Wilcoxon signed-rank test and Bootstrap robustness verification.
+- `01_fig01_table2_lat.ipynb` — 纬度分布与基准统计（Fig 1 / Table 2）
+- `02_fig02_sg_sf_lon.ipynb` — 黑子群/耀斑经度相位分析（Fig 2）
+- `03_fig03_urian_wing.ipynb` — 天王星“翼状”几何伪影分析（Fig 3）
 
-### 3.3 `notebooks/03_planet_artifact` (Planetary Artifacts & Null Hypothesis)
-- **Paper Section**: §3 (Statistical Challenges & Correction Strategies) & §5 (Coincidence Examples)
-- **Core Functions**:
-  - **Aliasing Reproduction (Fig03)**: Reproduces spurious statistical signals caused by sampling window lengths (e.g., 88-year resonance with Saturn/Schwabe cycles), demonstrating the importance of Red Noise models.
-  - **Geometric Artifact Analysis (Fig04)**: Resolves the geometric origin of the "Uranian Wing Diagram," proving it is a sampling bias caused by the geometric alignment factor $F_{geo}$.
-  - **FDR Correction**: Applies Benjamini-Hochberg procedure to control the False Discovery Rate for a full parameter scan of 781 bodies, proving no significant frequency effects beyond the 8 major planets.
+### `04_asymmetric/`
 
-### 3.4 `notebooks/04_conj_enh_opp_sup` (CEOS Effect)
-- **Paper Section**: §5 (Phase Association in Heliocentric Ecliptic Perspective)
-- **Core Functions**:
-  - **CEOS Quantification (Fig05)**: Statistically verifies the significant enhancement at planetary Conjunction ($0^\circ$) and suppression at Opposition ($180^\circ$).
-  - **Probability Density Correction**: Constructs $P_{Kep}(\lambda) \propto r^2$ Keplerian dwell-time probability model to eliminate the "Aphelion Effect."
-  - **Bayesian Inference (Fig06)**: Calculates the posterior ratio $\lambda = k_{obs}/k_{exp}$, confirming the unimodal polarity asymmetry (distinguishing it from the bimodal symmetry of linear tides).
-  - **Cyclic Time-Shift (CTS) Test**: Verifies statistical significance via $N=10,000$ random phase shifts while preserving time series autocorrelation structure.
+CEOS 非对称效应、衰退阶段分析与分类对比。
 
-### 3.5 `notebooks/05_p_m_a_model` (P-M-A Hybrid Model)
-- **Paper Section**: §6 (P-M-A Hybrid Analysis Framework)
-- **Core Functions**:
-  - **P (Planetary-Baseline)**: Uses Ridge Regression to extract the 11-year baseline trend from planetary ephemerides ($R^2 \approx 0.6$) (Table 3).
-  - **M (Modulation)**: Uses LightGBM to capture the non-linear amplitude modulation of the solar rotation band energy envelope by planets (Fig07).
-  - **A (Autocorrelation)**: Uses LSTM networks to fit the high-frequency residuals containing chaotic dynamics.
-  - **Model Evaluation (Fig08 & Table 5)**: Compares $R^2$ and DM statistics across different configurations, validating the superiority of the hybrid architecture.
-  - **Shadow Test (Table 4)**: Verifies that the physical model's predictive power is significantly better than randomized controls with consistent dimensions but time shifts.
+**核心引擎：**
 
-## 4. Results
+- `ceos_engine.py` — 高频置换统计引擎
+- `algo_workers.py` — 算法并行工作模块
 
-- **`results/`**: The directory structure mirrors the code directory.
-- It contains all generated CSV statistical tables, Excel pivot tables, and vector graphics (EPS/PDF) used in the manuscript.
+**计算流程（按顺序执行）：**
 
-## 5. Environment
+| 编号 | 文件 | 用途 |
+|------|------|------|
+| 00 | `00_prepare_cache.py` | 预处理缓存 |
+| 00b | `00b_find_decay_boundary.py` | 衰退边界搜索 |
+| 01 | `01_compute_sg.py` | 黑子群 CEOS 计算 |
+| 02 | `02_compute_sf.py` | 耀斑 CEOS 计算 |
+| 03 | `03_analyze_results.py` | 结果汇总分析 |
+| 04 | `04_deep_sg_analysis.py` | 黑子群深度分析 |
 
-The code was developed and tested in the following environment:
+**分析与图表 Notebook：**
 
-- **OS**: Ubuntu 24.04 LTS
-- **Hardware**: AMD Ryzen 9950X, 192GB RAM, NVIDIA RTX 4090
+- `05_run_all.ipynb` — 批量运行入口
+- `06_fig4_flare_decay.ipynb` — Fig 4: 耀斑衰退分析
+- `07_subset_asymmetry.ipynb` — 子集非对称分布分析
+- `08_run_classification_contrast.ipynb` — 分类对比（ROC / 分类结果）
+- `09_fig5_sunspot_dilution.ipynb` — Fig 5: 黑子稀释效应
+- `10_fig6_phase_rose.ipynb` — Fig 6: 相位玫瑰图
 
-> [!TIP]
-> **Python Environment Setup**
->
-> To ensure dependency compatibility (especially for TensorFlow and SunPy), **Python 3.12** is recommended.
-> We suggest using `Miniforge` (Mamba) for environment management. Below is an example installation and configuration for Linux:
+### `05_multidimensional/`
+
+多行星组合扫描、太阳周期稳定性与稳健性检验。
+
+- `01_fig07_subset_scan_viz.py` — Fig 7: 子集扫描可视化
+- `02_fig08_solar_cycle_summary.py` — Fig 8 数据汇总
+- `03_fig08_solar_cycle_viz.py` — Fig 8: 太阳周期稳定性可视化
+- `04_fig09_robustness_viz.py` — Fig 9: 稳健性检验可视化
+- `05_fig07_fig09_showcase.ipynb` — Fig 7–9 展示 Notebook
+- `10_robustness_tests/` — 附加测试脚本：`bootstrap_ci.py`、`null_planet_test.py`、`tidal_correlation.py`
+
+## 结果内容
+
+`results/` 目录包含论文全部可复现图表及中间统计数据：
+
+| 子目录 | 内容 |
+|--------|------|
+| `03_coord_baseline/` | Fig 01–03 主图（eps）及源数据（xlsx） |
+| `04_asymmetric/` | Fig 04–06 主图（eps）及源数据（csv/xlsx） |
+| `04_asymmetric/sg/` | 黑子群统计结果（58 个 csv）；`cache_data/` 当前仅保留占位文件 |
+| `04_asymmetric/sf/` | 耀斑统计结果（40 个 csv）；`cache_data/` 当前仅保留占位文件 |
+| `04_asymmetric/analysis/` | 补充分析图（11 个 png） |
+| `04_asymmetric/08_*` | 分类对比结果（ROC json + csv） |
+| `05_multidimensional/` | Fig 07–09 主图（eps/png）及汇总数据（csv） |
+| `05_multidimensional/10_robustness_tests/` | 稳健性测试输出（csv）及 `figures/` 下的 png 图 |
+
+## 数据说明
+
+由于 GitHub 文件大小限制，完整数据未全部纳入此仓库。`data/ready/` 目录仅包含本次新增的 `sfi_1975-2024.csv`，其余 15 个就绪数据文件（parquet/csv，共约 6 GB）需另行下载。以下目录保留为占位符：
+
+- `data/00_raw/` — 原始数据
+- `data/interm/` — 中间缓存
+- `data/ready/` — 就绪数据（需下载补全）
+- `results/04_asymmetric/sf/cache_data/` — 耀斑计算缓存
+- `results/04_asymmetric/sg/cache_data/` — 黑子群计算缓存
+
+- 审稿读者：请使用投稿系统或补充材料中提供的匿名下载链接
+- 公开发布后：请从 Zenodo（DOI: _待补充_）下载完整数据
+
+下载后将压缩包解压到仓库根目录，数据将自动合并到 `data/` 和 `results/` 目录。
+
+## 运行环境
+
+建议使用 Python 3.13，推荐通过 [Miniforge](https://github.com/conda-forge/miniforge) (Mamba) 管理环境：
 
 ```bash
-# 1. Download and Install Miniforge (Linux-x86_64)
-wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
-chmod +x Miniforge3-Linux-x86_64.sh
-bash Miniforge3-Linux-x86_64.sh
+# 创建并激活环境
+mamba create -n ceos python=3.13 -y
+conda activate ceos
 
-# 2. Create New Environment (Specify Python 3.12)
-mamba create -n sunspot_env python=3.12 -y
+# 安装依赖（全部来自 conda-forge，避免 conda/pip 混用冲突）
+mamba install numpy pandas scipy astropy astroquery sunpy \
+    matplotlib seaborn scikit-learn lightgbm \
+    requests beautifulsoup4 ephem xlsxwriter openpyxl \
+    pyarrow tqdm jupyterlab ipykernel -y
 
-# 3. Activate Environment
-conda activate sunspot_env
-
-# 4. Install Business Logic Libraries (SciComp + ML + Plotting)
-mamba install pandas numpy scipy astropy astroquery sunpy scikit-learn lightgbm \
-    statsmodels pygam scikit-optimize joblib pybaselines matplotlib seaborn \
-    requests beautifulsoup4 openpyxl tqdm pyarrow lxml ipywidgets bottleneck tabulate \
-    tensorflow numexpr xlsxwriter ipykernel jupyter jupyterlab-language-pack-zh-CN -y
-
-# 5. Add Environment as Jupyter Kernel
-python -m ipykernel install --user --name sunspot_env --display-name "Python (py312sunspot)"
+# 注册 Jupyter 内核
+python -m ipykernel install --user --name ceos --display-name "Python (ceos)"
 ```
+
+`04_asymmetric/` 中的高频置换与批量统计任务支持多核 CPU 并行，也支持通过 CuPy 进行 GPU 加速（自动检测，无 GPU 则退回 CPU）。如需启用 GPU 加速：
+
+```bash
+mamba install cupy -y
+```
+
+常规图表复现与结果检查不要求高性能服务器。
+
+## License
+
+当前目录尚未附带 `LICENSE` 文件。
+
+- 若准备公开发布，请在仓库根目录补充正式许可证文本（例如 MIT）
+- 在补充许可证前，不建议将本仓库表述为已完成开源授权
