@@ -1,6 +1,7 @@
 # Solar CEOS
 
-太阳活动的非对称统计效应（原CEOS）研究的代码、结果图表与部分数据。
+太阳活动非对称统计效应研究的代码、结果图表与部分数据。  
+（Asymmetric Statistical Effects of Solar Activity, formerly CEOS）
 
 本仓库包含：
 
