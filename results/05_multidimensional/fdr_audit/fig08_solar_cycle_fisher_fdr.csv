@@ -1,0 +1,9 @@
+Dataset,Dataset_Label,Subset_Role,Subset_Label,Window,Fisher_Stat,Fisher_p,Fisher_q_dataset_window,Fisher_n_dataset_window
+sf,Flare,jup_sat,Jup+Sat,2,11.07,0.197767,0.197767,4.0
+sf,Flare,all_7,Mer+Ven+Mar+Jup+Sat+Ura+Nep,2,16.181,0.039865,0.07973,4.0
+sf,Flare,best_single,Ven,2,14.074,0.079858,0.10647733333333333,4.0
+sf,Flare,best_multi,Ven+Mar,2,17.275,0.027373,0.07973,4.0
+sg,Sunspot,jup_sat,Jup+Sat,2,9.155,0.329354,0.49346266666666666,4.0
+sg,Sunspot,all_7,Mer+Ven+Mar+Jup+Sat+Ura+Nep,2,8.949,0.346653,0.49346266666666666,4.0
+sg,Sunspot,best_single,Ven,2,8.679,0.370097,0.49346266666666666,4.0
+sg,Sunspot,best_multi,Ven+Mar,2,4.263,0.832606,0.832606,4.0

@@ -21,8 +21,9 @@
 │   ├── 02_data_prep/          # 数据下载与清洗（9 notebooks）
 │   ├── 03_coord_baseline/     # 坐标基准与基础图表（3 notebooks）
 │   ├── 04_asymmetric/         # CEOS 非对称效应（8 py + 6 notebooks）
-│   └── 05_multidimensional/   # 多行星扫描与稳健性（4 py + 1 notebook）
-│       └── 10_robustness_tests/   # bootstrap / null planet / tidal
+│   └── 05_multidimensional/   # 多行星扫描与稳健性（6 py + 1 notebook）
+│       ├── 10_robustness_tests/   # bootstrap / null planet / tidal
+│       └── fdr_audit/             # → results 中的 FDR 审计输出由 07_fdr_audit.py 生成
 └── results/
     ├── 03_coord_baseline/     # Fig01–Fig03 (eps + xlsx)
     ├── 04_asymmetric/         # Fig04–Fig06 (eps + csv/xlsx)
@@ -32,6 +33,7 @@
     │   └── sg/                # 黑子群统计结果 (58 csv)
     │       └── cache_data/    # 缓存目录占位
     └── 05_multidimensional/   # Fig07–Fig09 (eps + png + csv)
+        ├── fdr_audit/             # BH-FDR 校正结果 (13 csv)
         └── 10_robustness_tests/   # 稳健性测试输出 (csv + figures/*.png)
 ```
 
@@ -99,6 +101,8 @@ CEOS 非对称效应、衰退阶段分析与分类对比。
 - `03_fig08_solar_cycle_viz.py` — Fig 8: 太阳周期稳定性可视化
 - `04_fig09_robustness_viz.py` — Fig 9: 稳健性检验可视化
 - `05_fig07_fig09_showcase.ipynb` — Fig 7–9 展示 Notebook
+- `06_multi_alignment.py` — 多星取交(AND)连珠检验
+- `07_fdr_audit.py` — BH-FDR 多重比较校正审计（生成 `results/.../fdr_audit/`）
 - `10_robustness_tests/` — 附加测试脚本：`bootstrap_ci.py`、`null_planet_test.py`、`tidal_correlation.py`
 
 ## 结果内容
@@ -114,6 +118,7 @@ CEOS 非对称效应、衰退阶段分析与分类对比。
 | `04_asymmetric/analysis/` | 补充分析图（11 个 png） |
 | `04_asymmetric/08_*` | 分类对比结果（ROC json + csv） |
 | `05_multidimensional/` | Fig 07–09 主图（eps/png）及汇总数据（csv） |
+| `05_multidimensional/fdr_audit/` | BH-FDR 校正结果（13 个 csv），图中 $q$ 值标注的数据来源 |
 | `05_multidimensional/10_robustness_tests/` | 稳健性测试输出（csv）及 `figures/` 下的 png 图 |
 
 ## 数据说明
@@ -175,7 +180,7 @@ mamba install cupy -y
 | 版本 | 日期 | 说明 |
 |------|------|------|
 | v1 | 2025-12 | 初版（标签 `v1-submitted`，[下载 zip](https://github.com/Solar-CEOS/solar-ceos/archive/refs/tags/v1-submitted.zip)） |
-| v2 | 2026-03 | 修改版（当前 `main` 分支）：notebooks 重构为 03–05 模块|
+| v2 | 2026-03 | 二修版（当前 `main` 分支）：notebooks 重构为 03–05 模块；新增多星连珠检验(`06_multi_alignment.py`)与 BH-FDR 审计(`07_fdr_audit.py`)；Fig 4/6/7/8 标注 FDR $q$ 值 |
 
 查看 v1 代码：点击上方链接下载 zip，或在本地执行 `git checkout v1-submitted`，看完后用 `git checkout main` 返回。
 

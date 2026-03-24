@@ -33,6 +33,7 @@ FIG08_FIG_BASENAME = "Fig08_solar_cycle_stability"
 FIG08_SUMMARY_CSV = "Fig08_solar_cycle_subset_summary.csv"
 
 CSV_PATH = os.path.join(OUTPUT_DIR, FIG08_SUMMARY_CSV)
+FDR_CSV = os.path.join(OUTPUT_DIR, "fdr_audit", "fig08_solar_cycle_fdr.csv")
 
 SUBSET_ORDER = ["best_single", "best_multi", "all_7", "jup_sat"]
 SUBSET_DISPLAY = {
@@ -54,6 +55,14 @@ def main() -> None:
     os.makedirs(FIG_DIR, exist_ok=True)
 
     df = pd.read_csv(CSV_PATH)
+
+    # ── Load FDR q-values ──
+    fdr_lookup: dict[tuple, float] = {}
+    if os.path.exists(FDR_CSV):
+        fdr_df = pd.read_csv(FDR_CSV)
+        for _, row in fdr_df.iterrows():
+            key = (row["Dataset"], row["Subset_Role"], row["SC"], int(row["Window"]))
+            fdr_lookup[key] = float(row["Conj_q_dataset_window"])
 
     fig, axes = plt.subplots(2, 4, figsize=(20, 8.5),
                              gridspec_kw={"hspace": 0.38, "wspace": 0.30})
@@ -77,11 +86,14 @@ def main() -> None:
                              color=LIGHT_SG, edgecolor=COLOR_SG, linewidth=0.9,
                              label="Sunspot", zorder=3)
 
-        # Mark significant p values
+        # Mark significant p values with FDR status
         for i, (_, row) in enumerate(sf_data.iterrows()):
             if row["Conj_p"] < 0.05:
-                ax_top.text(i - w/2, row["Conj_Ratio"] + 1.5, "*",
-                           ha="center", fontsize=11, fontweight="bold", color=COLOR_SF)
+                fdr_key = ("sf", role, row["SC"], int(row["Window"]))
+                q_val = fdr_lookup.get(fdr_key, np.nan)
+                marker = "★" if (not np.isnan(q_val) and q_val < 0.05) else "☆"
+                ax_top.text(i - w/2, row["Conj_Ratio"] + 1.5, marker,
+                           ha="center", fontsize=9, color=COLOR_SF)
 
         ax_top.axhline(100, color="gray", linestyle="--", linewidth=1.0, zorder=2)
         ax_top.set_xticks(x)
@@ -102,6 +114,10 @@ def main() -> None:
         ax_top.set_title(f"({panel_letter}) {subset_label}", fontsize=10.5)
         if col_idx == 0:
             ax_top.legend(frameon=False, loc="upper left", fontsize=8)
+            ax_top.text(0.98, 0.98, "★ raw $p<.05$ & $q<.05$\n☆ raw $p<.05$ only",
+                       transform=ax_top.transAxes, ha="right", va="top", fontsize=6.5,
+                       color="#555555", bbox=dict(boxstyle="round,pad=0.2",
+                       facecolor="white", edgecolor="#cccccc", alpha=0.9))
 
         # --- Bottom row: Asym ---
         bars_sf_a = ax_bot.bar(x - w/2, sf_data["Asym_Amp"].values, w,

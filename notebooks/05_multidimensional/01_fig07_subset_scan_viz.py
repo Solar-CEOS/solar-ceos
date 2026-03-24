@@ -51,6 +51,7 @@ FIG07_TABLE_NAMES = {
 
 SF_CSV = os.path.join(PROJECT_ROOT, "results", "04_asymmetric", "sf", "sf_subset_scan_no_earth.csv")
 SG_CSV = os.path.join(PROJECT_ROOT, "results", "04_asymmetric", "sg", "sg_subset_scan_no_earth.csv")
+FDR_CSV = os.path.join(PROJECT_ROOT, "results", "05_multidimensional", "fdr_audit", "subset_scan_fdr.csv")
 
 REF_WINDOW = 2
 PLANET_ORDER = ["Mer", "Ven", "Mar", "Jup", "Sat", "Ura", "Nep"]
@@ -335,7 +336,7 @@ def plot_asym_panel(ax: plt.Axes, df_ref: pd.DataFrame) -> None:
     ax.grid(axis="y", color="#e5e7e9", linewidth=0.8)
 
 
-def plot_nested_panel(ax: plt.Axes, nested_path: pd.DataFrame) -> None:
+def plot_nested_panel(ax: plt.Axes, nested_path: pd.DataFrame, fdr_q: dict[int, float] | None = None) -> None:
     x = nested_path["Step"].to_numpy()
     excess = nested_path["Conj_Excess"].to_numpy()
     ratio = nested_path["Conj_Ratio"].to_numpy()
@@ -363,8 +364,11 @@ def plot_nested_panel(ax: plt.Axes, nested_path: pd.DataFrame) -> None:
     }
     for step, cfg in annotations.items():
         y = float(nested_path.loc[nested_path["Step"] == step, "Conj_Ratio"].iloc[0])
+        ann_text = f"{cfg['label']}\n{y:.2f}%"
+        if fdr_q and step in fdr_q:
+            ann_text += f"\n$q$ = {fdr_q[step]:.3f}"
         ax2.annotate(
-            f"{cfg['label']}\n{y:.2f}%",
+            ann_text,
             xy=(step, y),
             xytext=cfg["xytext"],
             textcoords="offset points",
@@ -455,6 +459,19 @@ def main() -> None:
     }
     save_tables(tables)
 
+    # ── Load FDR q-values for nested path annotations ──
+    fdr_q: dict[int, float] = {}
+    if os.path.exists(FDR_CSV):
+        fdr_df = pd.read_csv(FDR_CSV)
+        fdr_sf = fdr_df[
+            (fdr_df["Source_File"] == "sf_subset_scan_no_earth.csv")
+            & (fdr_df["Window"] == REF_WINDOW)
+        ]
+        for _, row in nested_path.iterrows():
+            match = fdr_sf[fdr_sf["Label"] == row["Subset_Label"]]
+            if len(match) == 1:
+                fdr_q[int(row["Step"])] = float(match.iloc[0]["Conj_q_window"])
+
     fig, axes = plt.subplots(1, 4, figsize=(23, 6.1), gridspec_kw={"width_ratios": [1.3, 1.3, 1.1, 1.0]})
     fig.subplots_adjust(wspace=0.38)
     role_display_labels = {
@@ -464,7 +481,7 @@ def main() -> None:
     }
     plot_distribution_panel(axes[0], df_ref)
     plot_asym_panel(axes[1], df_ref)
-    plot_nested_panel(axes[2], nested_path)
+    plot_nested_panel(axes[2], nested_path, fdr_q=fdr_q)
     plot_window_panel(axes[3], window_sensitivity, role_display_labels)
 
     for ext in ["eps", "png"]:

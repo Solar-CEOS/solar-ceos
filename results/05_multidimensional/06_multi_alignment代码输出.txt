@@ -1,0 +1,506 @@
+[algo_workers] ✅ CuPy GPU 加速已启用 (4090)
+======================================================================
+  多星连珠 CEOS 分析  (审稿人意见 #2)
+  7P (排除地球), w=1-30, CTS N_SIM=50,000
+  MIN_EVENTS=30
+  GPU: 已启用
+======================================================================
+
+--- 加载数据 ---
+[数据] 加载黑子缓存: ready_All.parquet
+  黑子记录数: 256824, 星历天数: 73780
+  黑子: 256,824 条 (All 阶段)
+[数据] 加载耀斑缓存: ready_Flare_All.parquet
+  耀斑记录数: 39034, 星历天数: 73780
+  耀斑: 39,034 条
+
+======================================================================
+Phase 1: 多星连珠可行性普查
+======================================================================
+  SG_Total               N=  256,824
+  SG_Small               N=  151,201
+  SG_Medium              N=   86,883
+  SG_Large               N=   18,110
+  SG_XLarge              N=      630
+  SF_Total               N=   39,034
+  SF_B-Class             N=    7,127
+  SF_C-Class             N=   26,654
+  SF_M-Class             N=    4,824
+  SF_X-Class             N=      429
+
+  保存: /home/bml/data/202603二修版/results/05_multidimensional/phase1_alignment_census.csv (4,800 行)
+
+  ≥2 星同时命中事件数 (选取 w = 1, 2, 5, 10, 20, 30):
+    w Phase                Dataset       ≥2     n=2     n=3     n≥4
+  -----------------------------------------------------------------
+    1 Conju               SG_Total      192     190       2       0
+    1 Conju               SG_Small      118     116       2       0
+    1 Conju              SG_Medium       62      62       0       0
+    1 Conju               SG_Large       12      12       0       0
+    1 Conju               SF_Total       50      50       0       0
+    1 Conju             SF_B-Class        9       9       0       0
+    1 Conju             SF_C-Class       32      32       0       0
+    1 Conju             SF_M-Class        9       9       0       0
+    1 Oppos               SG_Total      163     162       1       0
+    1 Oppos               SG_Small       97      97       0       0
+    1 Oppos              SG_Medium       51      50       1       0
+    1 Oppos               SG_Large       14      14       0       0
+    1 Oppos              SG_XLarge        1       1       0       0
+    1 Oppos               SF_Total       26      26       0       0
+    1 Oppos             SF_B-Class        3       3       0       0
+    1 Oppos             SF_C-Class       23      23       0       0
+    2 Conju               SG_Total      738     726      12       0
+    2 Conju               SG_Small      449     441       8       0
+    2 Conju              SG_Medium      240     238       2       0
+    2 Conju               SG_Large       47      45       2       0
+    2 Conju              SG_XLarge        2       2       0       0
+    2 Conju               SF_Total      163     161       2       0
+    2 Conju             SF_B-Class       29      28       1       0
+    2 Conju             SF_C-Class      109     108       1       0
+    2 Conju             SF_M-Class       25      25       0       0
+    2 Oppos               SG_Total      689     677      12       0
+    2 Oppos               SG_Small      403     397       6       0
+    2 Oppos              SG_Medium      220     215       5       0
+    2 Oppos               SG_Large       64      63       1       0
+    2 Oppos              SG_XLarge        2       2       0       0
+    2 Oppos               SF_Total      113     109       4       0
+    2 Oppos             SF_B-Class       19      17       2       0
+    2 Oppos             SF_C-Class       78      76       2       0
+    2 Oppos             SF_M-Class       16      16       0       0
+    5 Conju               SG_Total    3,982   3,737     240       5
+    5 Conju               SG_Small    2,386   2,235     149       2
+    5 Conju              SG_Medium    1,309   1,237      70       2
+    5 Conju               SG_Large      276     257      19       0
+    5 Conju              SG_XLarge       11       8       2       1
+    5 Conju               SF_Total      798     742      53       3
+    5 Conju             SF_B-Class      144     136       8       0
+    5 Conju             SF_C-Class      540     501      37       2
+    5 Conju             SF_M-Class      110     101       8       1
+    5 Conju             SF_X-Class        4       4       0       0
+    5 Oppos               SG_Total    4,009   3,840     165       4
+    5 Oppos               SG_Small    2,452   2,354      95       3
+    5 Oppos              SG_Medium    1,265   1,208      56       1
+    5 Oppos               SG_Large      288     274      14       0
+    5 Oppos              SG_XLarge        4       4       0       0
+    5 Oppos               SF_Total      703     639      64       0
+    5 Oppos             SF_B-Class      102      87      15       0
+    5 Oppos             SF_C-Class      489     447      42       0
+    5 Oppos             SF_M-Class      101      94       7       0
+    5 Oppos             SF_X-Class       11      11       0       0
+   10 Conju               SG_Total   14,158  12,451   1,602     105
+   10 Conju               SG_Small    8,417   7,396     962      59
+   10 Conju              SG_Medium    4,733   4,169     527      37
+   10 Conju               SG_Large      971     855     108       8
+   10 Conju              SG_XLarge       37      31       5       1
+   10 Conju               SF_Total    2,669   2,278     359      32
+   10 Conju             SF_B-Class      489     439      45       5
+   10 Conju             SF_C-Class    1,819   1,531     266      22
+   10 Conju             SF_M-Class      338     287      47       4
+   10 Conju             SF_X-Class       23      21       1       1
+   10 Oppos               SG_Total   14,256  12,768   1,393      95
+   10 Oppos               SG_Small    8,526   7,608     855      63
+   10 Oppos              SG_Medium    4,731   4,268     438      25
+   10 Oppos               SG_Large      974     869      98       7
+   10 Oppos              SG_XLarge       25      23       2       0
+   10 Oppos               SF_Total    2,324   1,878     400      46
+   10 Oppos             SF_B-Class      396     339      56       1
+   10 Oppos             SF_C-Class    1,618   1,297     290      31
+   10 Oppos             SF_M-Class      281     220      49      12
+   10 Oppos             SF_X-Class       29      22       5       2
+   20 Conju               SG_Total   45,822  35,396   8,999   1,427
+   20 Conju               SG_Small   26,977  20,715   5,382     880
+   20 Conju              SG_Medium   15,488  12,063   2,974     451
+   20 Conju               SG_Large    3,224   2,511     622      91
+   20 Conju              SG_XLarge      133     107      21       5
+   20 Conju               SF_Total    7,608   5,353   1,838     417
+   20 Conju             SF_B-Class    1,369   1,078     228      63
+   20 Conju             SF_C-Class    5,194   3,576   1,319     299
+   20 Conju             SF_M-Class      974     645     278      51
+   20 Conju             SF_X-Class       71      54      13       4
+   20 Oppos               SG_Total   46,607  37,057   8,188   1,362
+   20 Oppos               SG_Small   27,550  21,781   4,941     828
+   20 Oppos              SG_Medium   15,693  12,598   2,667     428
+   20 Oppos               SG_Large    3,282   2,610     569     103
+   20 Oppos              SG_XLarge       82      68      11       3
+   20 Oppos               SF_Total    7,080   5,078   1,564     438
+   20 Oppos             SF_B-Class    1,261     944     265      52
+   20 Oppos             SF_C-Class    4,867   3,464   1,088     315
+   20 Oppos             SF_M-Class      877     619     194      64
+   20 Oppos             SF_X-Class       75      51      17       7
+   30 Conju               SG_Total   84,026  56,586  21,754   5,686
+   30 Conju               SG_Small   49,253  32,995  12,835   3,423
+   30 Conju              SG_Medium   28,548  19,347   7,325   1,876
+   30 Conju               SG_Large    5,982   4,069   1,541     372
+   30 Conju              SG_XLarge      243     175      53      15
+   30 Conju               SF_Total   13,004   7,770   3,826   1,408
+   30 Conju             SF_B-Class    2,331   1,510     633     188
+   30 Conju             SF_C-Class    8,866   5,227   2,642     997
+   30 Conju             SF_M-Class    1,666     943     517     206
+   30 Conju             SF_X-Class      141      90      34      17
+   30 Oppos               SG_Total   85,742  59,186  21,320   5,236
+   30 Oppos               SG_Small   50,407  34,635  12,547   3,225
+   30 Oppos              SG_Medium   29,103  20,253   7,213   1,637
+   30 Oppos               SG_Large    6,061   4,166   1,529     366
+   30 Oppos              SG_XLarge      171     132      31       8
+   30 Oppos               SF_Total   12,807   8,045   3,497   1,265
+   30 Oppos             SF_B-Class    2,277   1,502     605     170
+   30 Oppos             SF_C-Class    8,813   5,491   2,412     910
+   30 Oppos             SF_M-Class    1,581     976     438     167
+   30 Oppos             SF_X-Class      136      76      42      18
+
+  测试组合: 双星=84, 三星=280, 合计=364
+
+======================================================================
+Phase 2: 连珠 CEOS + CTS 检验
+  连珠判定: (bits_c & mask_c == mask_c) AND (bits_o & mask_o == mask_o)
+  max(k_obs, k_exp_screen@256) < 30 的测试跳过完整 CTS
+  BH-FDR 多重比较校正按 (Dataset, N_Planets) 分组
+======================================================================
+
+  [SG_Total] N=256,824
+[algo_workers] ✅ CuPy GPU 加速已启用 (4090)
+    w= 1  active=  0/364  screen=256  sig(p<.05)= 0  1.2s
+    w= 2  active= 82/364  screen=256  sig(p<.05)= 8  27.0s
+    w= 3  active= 84/364  screen=256  sig(p<.05)= 3  27.1s
+    w= 4  active= 84/364  screen=256  sig(p<.05)= 6  27.1s
+    w= 5  active= 87/364  screen=256  sig(p<.05)=10  27.1s
+    w= 6  active= 93/364  screen=256  sig(p<.05)=11  27.1s
+    w= 7  active=104/364  screen=256  sig(p<.05)=11  27.1s
+    w= 8  active=153/364  screen=256  sig(p<.05)=15  29.8s
+    w= 9  active=311/364  screen=256  sig(p<.05)=19  43.9s
+    w=10  active=355/364  screen=256  sig(p<.05)=13  48.4s
+    w=11  active=358/364  screen=256  sig(p<.05)=15  48.7s
+    w=12  active=362/364  screen=256  sig(p<.05)=21  49.1s
+    w=13  active=362/364  screen=256  sig(p<.05)=18  49.1s
+    w=14  active=362/364  screen=256  sig(p<.05)=20  49.1s
+    w=15  active=364/364  screen=256  sig(p<.05)=20  49.4s
+    w=16  active=364/364  screen=256  sig(p<.05)=19  49.4s
+    w=17  active=364/364  screen=256  sig(p<.05)=21  49.5s
+    w=18  active=364/364  screen=256  sig(p<.05)=25  49.5s
+    w=19  active=364/364  screen=256  sig(p<.05)=24  49.5s
+    w=20  active=364/364  screen=256  sig(p<.05)=23  49.5s
+    w=21  active=364/364  screen=256  sig(p<.05)=23  49.6s
+    w=22  active=364/364  screen=256  sig(p<.05)=21  49.6s
+    w=23  active=364/364  screen=256  sig(p<.05)=22  49.6s
+    w=24  active=364/364  screen=256  sig(p<.05)=18  49.7s
+    w=25  active=364/364  screen=256  sig(p<.05)=21  49.8s
+    w=26  active=364/364  screen=256  sig(p<.05)=23  49.8s
+    w=27  active=364/364  screen=256  sig(p<.05)=22  49.8s
+    w=28  active=364/364  screen=256  sig(p<.05)=20  49.9s
+    w=29  active=364/364  screen=256  sig(p<.05)=20  49.9s
+    w=30  active=364/364  screen=256  sig(p<.05)=21  50.0s
+
+  [SG_Small] N=151,201
+    w= 1  active=  0/364  screen=256  sig(p<.05)= 0  0.2s
+    w= 2  active=  9/364  screen=256  sig(p<.05)= 3  15.8s
+    w= 3  active= 84/364  screen=256  sig(p<.05)= 6  15.9s
+    w= 4  active= 84/364  screen=256  sig(p<.05)= 7  15.9s
+    w= 5  active= 84/364  screen=256  sig(p<.05)= 8  15.9s
+    w= 6  active= 88/364  screen=256  sig(p<.05)= 9  15.9s
+    w= 7  active= 90/364  screen=256  sig(p<.05)= 9  15.9s
+    w= 8  active=101/364  screen=256  sig(p<.05)= 7  15.9s
+    w= 9  active=124/364  screen=256  sig(p<.05)=15  16.3s
+    w=10  active=180/364  screen=256  sig(p<.05)=14  19.4s
+    w=11  active=344/364  screen=256  sig(p<.05)=21  28.6s
+    w=12  active=356/364  screen=256  sig(p<.05)=24  29.4s
+    w=13  active=362/364  screen=256  sig(p<.05)=28  29.7s
+    w=14  active=362/364  screen=256  sig(p<.05)=28  29.8s
+    w=15  active=362/364  screen=256  sig(p<.05)=31  29.8s
+    w=16  active=364/364  screen=256  sig(p<.05)=25  29.9s
+    w=17  active=364/364  screen=256  sig(p<.05)=26  30.0s
+    w=18  active=364/364  screen=256  sig(p<.05)=26  30.0s
+    w=19  active=364/364  screen=256  sig(p<.05)=26  30.0s
+    w=20  active=364/364  screen=256  sig(p<.05)=28  30.0s
+    w=21  active=364/364  screen=256  sig(p<.05)=28  30.0s
+    w=22  active=364/364  screen=256  sig(p<.05)=31  30.0s
+    w=23  active=364/364  screen=256  sig(p<.05)=27  30.0s
+    w=24  active=364/364  screen=256  sig(p<.05)=27  30.1s
+    w=25  active=364/364  screen=256  sig(p<.05)=25  30.1s
+    w=26  active=364/364  screen=256  sig(p<.05)=25  30.2s
+    w=27  active=364/364  screen=256  sig(p<.05)=25  30.1s
+    w=28  active=364/364  screen=256  sig(p<.05)=22  30.2s
+    w=29  active=364/364  screen=256  sig(p<.05)=20  30.2s
+    w=30  active=364/364  screen=256  sig(p<.05)=20  30.2s
+
+  [SG_Medium] N=86,883
+    w= 1  active=  0/364  screen=256  sig(p<.05)= 0  0.1s
+    w= 2  active=  0/364  screen=256  sig(p<.05)= 0  0.1s
+    w= 3  active= 18/364  screen=256  sig(p<.05)= 2  9.0s
+    w= 4  active= 84/364  screen=256  sig(p<.05)= 3  9.2s
+    w= 5  active= 84/364  screen=256  sig(p<.05)= 6  9.2s
+    w= 6  active= 84/364  screen=256  sig(p<.05)= 4  9.1s
+    w= 7  active= 86/364  screen=256  sig(p<.05)= 3  9.2s
+    w= 8  active= 88/364  screen=256  sig(p<.05)= 3  9.2s
+    w= 9  active= 89/364  screen=256  sig(p<.05)= 3  9.1s
+    w=10  active= 96/364  screen=256  sig(p<.05)= 4  9.2s
+    w=11  active=123/364  screen=256  sig(p<.05)= 9  9.2s
+    w=12  active=187/364  screen=256  sig(p<.05)= 7  11.1s
+    w=13  active=334/364  screen=256  sig(p<.05)= 9  15.5s
+    w=14  active=358/364  screen=256  sig(p<.05)=12  16.4s
+    w=15  active=362/364  screen=256  sig(p<.05)=13  16.5s
+    w=16  active=362/364  screen=256  sig(p<.05)=13  16.5s
+    w=17  active=364/364  screen=256  sig(p<.05)=13  16.6s
+    w=18  active=364/364  screen=256  sig(p<.05)=15  16.6s
+    w=19  active=364/364  screen=256  sig(p<.05)=18  16.6s
+    w=20  active=364/364  screen=256  sig(p<.05)=22  16.6s
+    w=21  active=364/364  screen=256  sig(p<.05)=18  16.6s
+    w=22  active=364/364  screen=256  sig(p<.05)=17  16.6s
+    w=23  active=364/364  screen=256  sig(p<.05)=16  16.6s
+    w=24  active=364/364  screen=256  sig(p<.05)=18  16.7s
+    w=25  active=364/364  screen=256  sig(p<.05)=14  16.7s
+    w=26  active=364/364  screen=256  sig(p<.05)=16  16.7s
+    w=27  active=364/364  screen=256  sig(p<.05)=11  16.7s
+    w=28  active=364/364  screen=256  sig(p<.05)=11  16.7s
+    w=29  active=364/364  screen=256  sig(p<.05)=15  16.7s
+    w=30  active=364/364  screen=256  sig(p<.05)=17  16.7s
+
+  [SG_Large] N=18,110
+    w= 1  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 2  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 3  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 4  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 5  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 6  active=  3/364  screen=256  sig(p<.05)= 2  1.7s
+    w= 7  active= 32/364  screen=256  sig(p<.05)= 0  1.9s
+    w= 8  active= 83/364  screen=256  sig(p<.05)= 1  2.0s
+    w= 9  active= 84/364  screen=256  sig(p<.05)= 1  1.9s
+    w=10  active= 84/364  screen=256  sig(p<.05)= 2  1.9s
+    w=11  active= 84/364  screen=256  sig(p<.05)= 2  1.9s
+    w=12  active= 85/364  screen=256  sig(p<.05)= 3  1.9s
+    w=13  active= 85/364  screen=256  sig(p<.05)= 3  1.9s
+    w=14  active= 86/364  screen=256  sig(p<.05)= 3  1.9s
+    w=15  active= 86/364  screen=256  sig(p<.05)= 3  1.9s
+    w=16  active= 87/364  screen=256  sig(p<.05)= 4  1.9s
+    w=17  active= 95/364  screen=256  sig(p<.05)= 4  1.9s
+    w=18  active=114/364  screen=256  sig(p<.05)= 6  1.9s
+    w=19  active=136/364  screen=256  sig(p<.05)= 6  2.0s
+    w=20  active=173/364  screen=256  sig(p<.05)= 6  2.3s
+    w=21  active=246/364  screen=256  sig(p<.05)= 7  2.7s
+    w=22  active=347/364  screen=256  sig(p<.05)=11  3.4s
+    w=23  active=358/364  screen=256  sig(p<.05)=13  3.4s
+    w=24  active=358/364  screen=256  sig(p<.05)=11  3.4s
+    w=25  active=361/364  screen=256  sig(p<.05)=13  3.5s
+    w=26  active=363/364  screen=256  sig(p<.05)=15  3.5s
+    w=27  active=364/364  screen=256  sig(p<.05)=13  3.5s
+    w=28  active=364/364  screen=256  sig(p<.05)=10  3.5s
+    w=29  active=364/364  screen=256  sig(p<.05)= 9  3.5s
+    w=30  active=364/364  screen=256  sig(p<.05)= 9  3.5s
+
+  [SG_XLarge] N=630
+    w= 1  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 2  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 3  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 4  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 5  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 6  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 7  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 8  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 9  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=10  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=11  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=12  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=13  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=14  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=15  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=16  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=17  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=18  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=19  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=20  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=21  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=22  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=23  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=24  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=25  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=26  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=27  active=  1/364  screen=256  sig(p<.05)= 0  0.1s
+    w=28  active=  4/364  screen=256  sig(p<.05)= 3  0.1s
+    w=29  active=  4/364  screen=256  sig(p<.05)= 3  0.1s
+    w=30  active=  4/364  screen=256  sig(p<.05)= 2  0.1s
+
+  [SF_Total] N=39,034
+    w= 1  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 2  active=  1/364  screen=256  sig(p<.05)= 0  3.9s
+    w= 3  active=  3/364  screen=256  sig(p<.05)= 0  4.1s
+    w= 4  active= 18/364  screen=256  sig(p<.05)= 2  4.1s
+    w= 5  active= 68/364  screen=256  sig(p<.05)= 4  4.1s
+    w= 6  active= 86/364  screen=256  sig(p<.05)= 6  4.1s
+    w= 7  active= 87/364  screen=256  sig(p<.05)= 9  4.1s
+    w= 8  active= 91/364  screen=256  sig(p<.05)=13  4.1s
+    w= 9  active= 96/364  screen=256  sig(p<.05)=16  4.1s
+    w=10  active=104/364  screen=256  sig(p<.05)=14  4.1s
+    w=11  active=114/364  screen=256  sig(p<.05)=17  4.1s
+    w=12  active=126/364  screen=256  sig(p<.05)=19  4.1s
+    w=13  active=143/364  screen=256  sig(p<.05)=24  4.3s
+    w=14  active=162/364  screen=256  sig(p<.05)=27  4.5s
+    w=15  active=186/364  screen=256  sig(p<.05)=26  4.8s
+    w=16  active=227/364  screen=256  sig(p<.05)=26  5.4s
+    w=17  active=331/364  screen=256  sig(p<.05)=27  6.7s
+    w=18  active=348/364  screen=256  sig(p<.05)=32  7.0s
+    w=19  active=360/364  screen=256  sig(p<.05)=29  7.1s
+    w=20  active=363/364  screen=256  sig(p<.05)=29  7.2s
+    w=21  active=364/364  screen=256  sig(p<.05)=32  7.2s
+    w=22  active=364/364  screen=256  sig(p<.05)=33  7.2s
+    w=23  active=364/364  screen=256  sig(p<.05)=31  7.2s
+    w=24  active=364/364  screen=256  sig(p<.05)=33  7.2s
+    w=25  active=364/364  screen=256  sig(p<.05)=30  7.2s
+    w=26  active=364/364  screen=256  sig(p<.05)=31  7.2s
+    w=27  active=364/364  screen=256  sig(p<.05)=31  7.2s
+    w=28  active=364/364  screen=256  sig(p<.05)=33  7.2s
+    w=29  active=364/364  screen=256  sig(p<.05)=32  7.3s
+    w=30  active=364/364  screen=256  sig(p<.05)=31  7.3s
+
+  [SF_B-Class] N=7,127
+    w= 1  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 2  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 3  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 4  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 5  active=  1/364  screen=256  sig(p<.05)= 0  0.5s
+    w= 6  active=  2/364  screen=256  sig(p<.05)= 0  0.7s
+    w= 7  active=  3/364  screen=256  sig(p<.05)= 1  0.8s
+    w= 8  active=  6/364  screen=256  sig(p<.05)= 2  0.7s
+    w= 9  active=  9/364  screen=256  sig(p<.05)= 4  0.8s
+    w=10  active= 18/364  screen=256  sig(p<.05)= 3  0.8s
+    w=11  active= 32/364  screen=256  sig(p<.05)= 4  0.7s
+    w=12  active= 78/364  screen=256  sig(p<.05)= 6  0.8s
+    w=13  active= 83/364  screen=256  sig(p<.05)= 7  0.8s
+    w=14  active= 83/364  screen=256  sig(p<.05)= 7  0.8s
+    w=15  active= 87/364  screen=256  sig(p<.05)= 6  0.8s
+    w=16  active= 89/364  screen=256  sig(p<.05)= 8  0.8s
+    w=17  active= 96/364  screen=256  sig(p<.05)=11  0.8s
+    w=18  active=100/364  screen=256  sig(p<.05)=12  0.7s
+    w=19  active=101/364  screen=256  sig(p<.05)=12  0.7s
+    w=20  active=107/364  screen=256  sig(p<.05)=15  0.8s
+    w=21  active=111/364  screen=256  sig(p<.05)=15  0.8s
+    w=22  active=117/364  screen=256  sig(p<.05)=16  0.8s
+    w=23  active=121/364  screen=256  sig(p<.05)=16  0.8s
+    w=24  active=132/364  screen=256  sig(p<.05)=16  0.8s
+    w=25  active=151/364  screen=256  sig(p<.05)=15  0.9s
+    w=26  active=155/364  screen=256  sig(p<.05)=15  0.9s
+    w=27  active=164/364  screen=256  sig(p<.05)=15  0.9s
+    w=28  active=188/364  screen=256  sig(p<.05)=16  1.0s
+    w=29  active=256/364  screen=256  sig(p<.05)=17  1.1s
+    w=30  active=340/364  screen=256  sig(p<.05)=18  1.4s
+
+  [SF_C-Class] N=26,654
+    w= 1  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 2  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 3  active=  1/364  screen=256  sig(p<.05)= 0  2.6s
+    w= 4  active=  3/364  screen=256  sig(p<.05)= 0  2.8s
+    w= 5  active= 20/364  screen=256  sig(p<.05)= 6  2.8s
+    w= 6  active= 61/364  screen=256  sig(p<.05)= 6  2.8s
+    w= 7  active= 86/364  screen=256  sig(p<.05)=10  2.8s
+    w= 8  active= 88/364  screen=256  sig(p<.05)=11  2.8s
+    w= 9  active= 89/364  screen=256  sig(p<.05)=12  2.8s
+    w=10  active= 99/364  screen=256  sig(p<.05)=16  2.8s
+    w=11  active=102/364  screen=256  sig(p<.05)=11  2.8s
+    w=12  active=111/364  screen=256  sig(p<.05)=17  2.8s
+    w=13  active=120/364  screen=256  sig(p<.05)=22  2.8s
+    w=14  active=133/364  screen=256  sig(p<.05)=26  2.9s
+    w=15  active=140/364  screen=256  sig(p<.05)=24  2.9s
+    w=16  active=166/364  screen=256  sig(p<.05)=22  3.2s
+    w=17  active=185/364  screen=256  sig(p<.05)=25  3.3s
+    w=18  active=216/364  screen=256  sig(p<.05)=24  3.6s
+    w=19  active=325/364  screen=256  sig(p<.05)=26  4.6s
+    w=20  active=352/364  screen=256  sig(p<.05)=26  4.9s
+    w=21  active=358/364  screen=256  sig(p<.05)=29  4.9s
+    w=22  active=360/364  screen=256  sig(p<.05)=28  4.9s
+    w=23  active=362/364  screen=256  sig(p<.05)=24  5.0s
+    w=24  active=363/364  screen=256  sig(p<.05)=26  5.0s
+    w=25  active=364/364  screen=256  sig(p<.05)=22  5.0s
+    w=26  active=364/364  screen=256  sig(p<.05)=27  5.0s
+    w=27  active=364/364  screen=256  sig(p<.05)=25  5.0s
+    w=28  active=364/364  screen=256  sig(p<.05)=24  5.0s
+    w=29  active=364/364  screen=256  sig(p<.05)=24  5.0s
+    w=30  active=364/364  screen=256  sig(p<.05)=28  5.0s
+
+  [SF_M-Class] N=4,824
+    w= 1  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 2  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 3  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 4  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 5  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 6  active=  2/364  screen=256  sig(p<.05)= 0  0.3s
+    w= 7  active=  2/364  screen=256  sig(p<.05)= 0  0.5s
+    w= 8  active=  4/364  screen=256  sig(p<.05)= 1  0.5s
+    w= 9  active=  7/364  screen=256  sig(p<.05)= 2  0.5s
+    w=10  active= 12/364  screen=256  sig(p<.05)= 6  0.5s
+    w=11  active= 21/364  screen=256  sig(p<.05)= 8  0.5s
+    w=12  active= 35/364  screen=256  sig(p<.05)= 5  0.5s
+    w=13  active= 43/364  screen=256  sig(p<.05)= 6  0.6s
+    w=14  active= 55/364  screen=256  sig(p<.05)= 3  0.5s
+    w=15  active= 86/364  screen=256  sig(p<.05)= 5  0.6s
+    w=16  active= 89/364  screen=256  sig(p<.05)= 8  0.5s
+    w=17  active= 95/364  screen=256  sig(p<.05)=10  0.5s
+    w=18  active=100/364  screen=256  sig(p<.05)=18  0.5s
+    w=19  active=101/364  screen=256  sig(p<.05)=15  0.5s
+    w=20  active=104/364  screen=256  sig(p<.05)=18  0.5s
+    w=21  active=108/364  screen=256  sig(p<.05)=24  0.5s
+    w=22  active=110/364  screen=256  sig(p<.05)=24  0.5s
+    w=23  active=118/364  screen=256  sig(p<.05)=31  0.6s
+    w=24  active=125/364  screen=256  sig(p<.05)=27  0.6s
+    w=25  active=131/364  screen=256  sig(p<.05)=27  0.6s
+    w=26  active=143/364  screen=256  sig(p<.05)=34  0.6s
+    w=27  active=156/364  screen=256  sig(p<.05)=30  0.6s
+    w=28  active=170/364  screen=256  sig(p<.05)=29  0.7s
+    w=29  active=184/364  screen=256  sig(p<.05)=26  0.7s
+    w=30  active=194/364  screen=256  sig(p<.05)=27  0.7s
+
+  [SF_X-Class] N=429
+    w= 1  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 2  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 3  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 4  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 5  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 6  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 7  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 8  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w= 9  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=10  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=11  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=12  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=13  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=14  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=15  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=16  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=17  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=18  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=19  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=20  active=  0/364  screen=256  sig(p<.05)= 0  0.0s
+    w=21  active=  1/364  screen=256  sig(p<.05)= 0  0.0s
+    w=22  active=  1/364  screen=256  sig(p<.05)= 0  0.1s
+    w=23  active=  1/364  screen=256  sig(p<.05)= 0  0.1s
+    w=24  active=  1/364  screen=256  sig(p<.05)= 0  0.1s
+    w=25  active=  1/364  screen=256  sig(p<.05)= 0  0.1s
+    w=26  active=  2/364  screen=256  sig(p<.05)= 0  0.1s
+    w=27  active=  2/364  screen=256  sig(p<.05)= 0  0.1s
+    w=28  active=  3/364  screen=256  sig(p<.05)= 1  0.1s
+    w=29  active=  3/364  screen=256  sig(p<.05)= 1  0.1s
+    w=30  active=  4/364  screen=256  sig(p<.05)= 3  0.1s
+
+  FDR 校正: raw p<0.05=3,405, BH-FDR q<0.05=6
+
+  双星结果: /home/bml/data/202603二修版/results/05_multidimensional/phase2_pair_alignment_ceos.csv
+           (25,200 行, 其中 CTS 完成: 16,542)
+  三星结果: /home/bml/data/202603二修版/results/05_multidimensional/phase2_triple_alignment_ceos.csv
+           (84,000 行, 其中 CTS 完成: 29,761)
+
+──────────────────────────────────────────────────────────────────────
+  木星+土星 (Jup+Sat) 连珠结果
+──────────────────────────────────────────────────────────────────────
+  (无 BH-FDR q<0.05 的结果)
+
+──────────────────────────────────────────────────────────────────────
+  全局 FDR 显著结果 Top 20 (BH q < 0.05)
+──────────────────────────────────────────────────────────────────────
+               Dataset   w           Combo       Scenario  k_obs   Ratio%      p_raw       q_bh
+             SG_XLarge  28         Ven+Nep             均合     30   195.22   0.018600   0.040300
+             SG_XLarge  28         Mar+Sat       Mar冲Sat合     30   199.83   0.017080   0.040300
+             SG_XLarge  29         Ven+Nep             均合     33   199.69   0.007800   0.040300
+             SG_XLarge  29         Mar+Sat       Mar冲Sat合     32   198.73   0.014760   0.040300
+             SG_XLarge  30         Ven+Nep             均合     36   203.95   0.003120   0.040300
+             SG_XLarge  30         Mar+Sat       Mar冲Sat合     34   196.96   0.014320   0.040300
+
+======================================================================
+  全部完成. 耗时: 2787s (46.5min)
+======================================================================
