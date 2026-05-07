@@ -194,11 +194,11 @@ save_dual(fig, "results/<dir>/FigNN_<name>.eps")
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
-| v1 | 2025-12 | 初投稿版本，标签 `v1-submitted`；[下载 zip](https://github.com/Solar-CEOS/solar-ceos/archive/refs/tags/v1-submitted.zip) |
-| v2 | 2026-03 | 二修版，标签 `v2-revision`；[下载 zip](https://github.com/Solar-CEOS/solar-ceos/archive/refs/tags/v2-revision.zip) |
-| v3 | 2026-05 | 三修版，标签 `v3-revision`；[下载 zip](https://github.com/Solar-CEOS/solar-ceos/archive/refs/tags/v3-revision.zip) |
+| v1 | 2025-12 | 初投稿版本，建立基础数据流程、CEOS 统计框架和初版论文图表 |
+| v2 | 2026-03 | 二修版，重构 notebook 与结果目录，新增多行星连珠检验和 BH-FDR 审计，补充 FDR q 值标注 |
+| v3 | 2026-05 | 三修版，重跑主要统计，使用稳定随机种子派生、14 日 block bootstrap、Fisher 合并 p 值、训练集内分位阈值，并统一图件风格和投稿版图表输出 |
 
-上述 zip 为 GitHub 自动生成的源码归档，只包含本仓库跟踪的代码、小型数据和结果文件；完整大型数据仍需按“数据说明”另行下载。当前 `main` 分支对应三修版整理状态。
+历史版本已用 Git 标签固定：`v1-submitted`、`v2-revision`、`v3-revision`。可在 GitHub 的 Tags 页面查看或下载对应版本源码包。当前 `main` 分支对应三修版整理状态。
 
 ## 许可
 
