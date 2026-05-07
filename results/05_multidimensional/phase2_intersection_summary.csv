@@ -1,0 +1,8 @@
+dataset,combo,window,role,conj_p,conj_q,sig_fdr
+SF_X-Class,Sat+Nep,28,均冲,0.00236,0.04484,True
+SG_XLarge,Mar+Sat,28,Mar冲Sat合,0.01608,0.04004,True
+SG_XLarge,Ven+Nep,28,均合,0.01848,0.04004,True
+SG_XLarge,Mar+Sat,29,Mar冲Sat合,0.01468,0.04004,True
+SG_XLarge,Ven+Nep,29,均合,0.00768,0.04004,True
+SG_XLarge,Mar+Sat,30,Mar冲Sat合,0.0156,0.04004,True
+SG_XLarge,Ven+Nep,30,均合,0.0028,0.0364,True

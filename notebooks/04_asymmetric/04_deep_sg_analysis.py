@@ -123,7 +123,7 @@ def main():
     for target_group in ['Large 500-2000', 'XLarge >2000', 'Medium 100-500']:
         print(f"\n  {target_group} - Conjunction Ratio:")
         print(f"  {'Stage':>15}  {'N':>7}  {'w=1':>8}  {'w=2':>8}  {'w=3':>8}  {'w=5':>8}")
-    
+
         for stage in stages:
             ds = df[(df['Stage'] == stage) & (df['Group'] == target_group) & (df['Type'] == 'Conjunction')]
             if len(ds) == 0: continue
@@ -249,17 +249,17 @@ def main():
         sf_t = df_sf[(df_sf['Group'] == 'Total') & (df_sf['Type'] == etype)]
         if len(sf_t) > 0:
             ax.plot(sf_t['Window'], sf_t['Ratio'], '-o', color='darkorange', markersize=4, label=f'Flare (N={sf_t.iloc[0]["N_Records"]})')
-    
+
         # 黑子 All-Total
         sg_t = df_all[(df_all['Group'] == 'Total') & (df_all['Type'] == etype)]
         if len(sg_t) > 0:
             ax.plot(sg_t['Window'], sg_t['Ratio'], '-s', color='steelblue', markersize=4, label=f'Sunspot (N={sg_t.iloc[0]["N_Records"]})')
-    
+
         # 黑子 XLarge
         sg_xl = df_all[(df_all['Group'] == 'XLarge >2000') & (df_all['Type'] == etype)]
         if len(sg_xl) > 0:
             ax.plot(sg_xl['Window'], sg_xl['Ratio'], '--^', color='green', markersize=4, label=f'Sunspot XLarge (N={sg_xl.iloc[0]["N_Records"]})')
-    
+
         ax.axhline(y=100, color='gray', linestyle='--', alpha=0.5)
         ax.set_title(etype)
         ax.set_xlabel('Window w (deg)')
@@ -324,11 +324,11 @@ def main():
       Fig.A  CEOS Asym by Category     — 耀斑/黑子分组 Asym 对比, 证明稀释效应
       Fig.B  Flare vs Sunspot Decay    — w=1-20 衰减曲线, 耀斑信号远强于黑子
       Fig.C  Sunspot Heatmap           — 阶段 × 面积交叉热图, 直观展示 XLarge 信号
-  
+
       [支撑图]
       Fig.D  Subset Asym Distribution  — 含/不含地球子集不对称分布对比
       Fig.E  Solar Cycle Bars          — Venus 4 周期全部正向 (耀斑)
-  
+
       [附录/补充]
       Fig.F  Algo 1 vs Algo 2 Decay    — Total Pairs vs At Least One 对比
     """)

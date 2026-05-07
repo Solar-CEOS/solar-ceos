@@ -1,8 +1,8 @@
 Section,Step,Subset_Label,N_Planets,Conj_k_obs,Conj_k_exp,Conj_Excess,Conj_Ratio,Conj_p,Opp_Ratio,Opp_p,Asym_Amp
-nested_path,1,Ven,1,522,433.72,88.28,120.35,0.0214,93.86,0.3766,26.5
-nested_path,2,Ven+Mar,2,1001,862.36,138.64,116.08,0.0044,97.01,0.5581,19.07
-nested_path,3,Ven+Mar+Jup,3,1462,1286.55,175.45,113.64,0.0014,100.94,0.8213,12.7
-nested_path,4,Mer+Ven+Mar+Jup,4,1925,1707.32,217.68,112.75,0.0005,102.59,0.4556,10.16
-nested_path,5,Mer+Ven+Mar+Jup+Sat,5,2362,2122.22,239.78,111.3,0.0003,103.1,0.2961,8.2
-nested_path,6,Mer+Ven+Mar+Jup+Sat+Ura,6,2732,2530.78,201.22,107.95,0.0031,100.92,0.7324,7.03
-nested_path,7,Mer+Ven+Mar+Jup+Sat+Ura+Nep,7,3094,2939.04,154.96,105.27,0.0293,99.61,0.8736,5.66
+nested_path,1,Ven,1,522,433.91,88.09,120.3,0.0209,93.88,0.3791,26.43
+nested_path,2,Ven+Mar,2,1001,862.47,138.53,116.06,0.0034,97.01,0.5575,19.06
+nested_path,3,Ven+Mar+Jup,3,1462,1286.91,175.09,113.61,0.001,100.95,0.823,12.65
+nested_path,4,Mer+Ven+Mar+Jup,4,1925,1707.61,217.39,112.73,0.0003,102.6,0.4542,10.13
+nested_path,5,Mer+Ven+Mar+Jup+Sat,5,2362,2122.48,239.52,111.29,0.0001,103.12,0.2958,8.17
+nested_path,6,Mer+Ven+Mar+Jup+Sat+Ura,6,2732,2531.03,200.97,107.94,0.0028,100.93,0.7334,7.01
+nested_path,7,Mer+Ven+Mar+Jup+Sat+Ura+Nep,7,3094,2939.2,154.8,105.27,0.0305,99.63,0.8761,5.64

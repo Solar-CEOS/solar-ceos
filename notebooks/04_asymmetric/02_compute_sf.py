@@ -11,7 +11,7 @@
   6. 太阳周分段: 6a All Total + 6b 按 Class (B/C/M/X)
 
 用法:
-  ~/miniforge3/envs/py313_tian_env/bin/python 02_compute_sf.py
+  ~/miniforge3/envs/ceos/bin/python 02_compute_sf.py
 """
 
 import sys
@@ -54,32 +54,32 @@ def main():
     print(f"窗口: Algo1/2=1-30, Algo3=1-10, Subset/Cycle=1-5")
     print(f"并行核心数: {N_WORKERS}")
     print("=" * 70)
-    
+
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     overall_start = time.time()
-    
+
     # 耀斑分组排序键 (B < C < M < X)
     flare_sort = lambda x: ('BCMX'.find(x[0]) if x[0] in 'BCMX' else 99, x)
-    
+
     # 发现缓存文件
-    stage_files = sorted([f for f in os.listdir(CACHE_DIR) 
+    stage_files = sorted([f for f in os.listdir(CACHE_DIR)
                           if f.startswith('ready_') and f.endswith('.parquet')])
     print(f"\n找到 {len(stage_files)} 个阶段文件: {[f.replace('ready_','').replace('.parquet','') for f in stage_files]}")
-    
+
     # --- Step 1: Algo 1 (Total Pairs) ---
     print("\n" + "=" * 60)
     print("Step 1: Algo 1 (Total Pairs) w=1-30")
     print("=" * 60)
     ce.run_algo12(CACHE_DIR, OUTPUT_DIR, THRESHOLDS_ALGO12, N_SIM_ALGO12,
                   N_WORKERS, stage_files, flare_sort, algo_type='algo1')
-    
+
     # --- Step 2: Algo 2 (At Least One) ---
     print("\n" + "=" * 60)
     print("Step 2: Algo 2 (At Least One) w=1-30")
     print("=" * 60)
     ce.run_algo12(CACHE_DIR, OUTPUT_DIR, THRESHOLDS_ALGO12, N_SIM_ALGO12,
                   N_WORKERS, stage_files, flare_sort, algo_type='algo2')
-    
+
     # --- Step 3: Algo 3 (单体 781) ---
     print("\n" + "=" * 60)
     print("Step 3: Algo 3 (单体 781 天体) w=1-10")
@@ -89,13 +89,13 @@ def main():
     if algo3_file and os.path.exists(algo3_file):
         print("\n  应用 FDR 校正...")
         ce.apply_fdr_to_algo3(algo3_file)
-    
+
     # --- Step 4: Kuiper 检验 ---
     print("\n" + "=" * 60)
     print("Step 4: Kuiper 检验")
     print("=" * 60)
     ce.run_kuiper_test(CACHE_DIR, OUTPUT_DIR, stage_files, prefix='sf')
-    
+
     # --- Step 5: 255 子集扫描 (分组) ---
     print("\n" + "=" * 60)
     print("Step 5: 255 子集扫描 (含/不含地球)")
@@ -105,12 +105,12 @@ def main():
     sun_lons = df_all['hme_lon'].values.astype(np.float64)
     sun_idxs = df_all['ephem_idx_daily'].values.astype(int)
     planet_matrix = df_all[ce.PLANET_COLS].values.astype(np.float64)
-    
+
     # 5a. All Total
     print("  [5a] All Total ...")
     ce.run_subset_scan(sun_lons, sun_idxs, planet_matrix, ephem_daily,
                        OUTPUT_DIR, 'sf', THRESHOLDS_SUBSET, N_SIM_SUBSET)
-    
+
     # 5b. 按 Class 分组扫描 (B/C/M/X-Class)
     for class_name in ['B-Class', 'C-Class', 'M-Class', 'X-Class']:
         print(f"  [5b] {class_name} ...")
@@ -125,7 +125,7 @@ def main():
         ce.run_subset_scan(g_lons, g_idxs, g_planets, ephem_daily,
                            OUTPUT_DIR, f'sf_{safe_name}',
                            THRESHOLDS_SUBSET, N_SIM_SUBSET)
-    
+
     # --- Step 6: 太阳周分段 (分组) ---
     print("\n" + "=" * 60)
     print("Step 6: 太阳周分段 (SC21-SC24)")
@@ -134,12 +134,12 @@ def main():
     # 筛选 SC21-SC24 (覆盖耀斑数据 1975-2017)
     cycles_sf = [(sc, s, e) for sc, s, e in cycles if int(sc[2:]) >= 21 and int(sc[2:]) <= 24]
     print(f"  覆盖太阳周: {[c[0] for c in cycles_sf]}")
-    
+
     # 6a. All Total
     print("  [6a] All Total ...")
     ce.run_solar_cycle_analysis(df_all, ephem_daily, cycles_sf,
                                  OUTPUT_DIR, 'sf', THRESHOLDS_CYCLE)
-    
+
     # 6b. 按 Class 分组分段 (B/C/M/X-Class)
     for class_name in ['B-Class', 'C-Class', 'M-Class', 'X-Class']:
         print(f"  [6b] {class_name} ...")
@@ -152,18 +152,18 @@ def main():
         ce.run_solar_cycle_analysis(df_class, ephem_daily, cycles_sf,
                                      OUTPUT_DIR, f'sf_{safe_name}',
                                      THRESHOLDS_CYCLE)
-    
+
     # --- Step 7: 太阳周 × 255 子集扫描 ---
     print("\n" + "=" * 60)
     print("Step 7: 太阳周 × 255 子集扫描 (CTS)")
     print("=" * 60)
-    
+
     # 7a. All Total
     print("  [7a] All Total ...")
     ce.run_solar_cycle_subset_scan(df_all, ephem_daily, cycles_sf,
                                     OUTPUT_DIR, 'sf',
                                     thresholds_subset=[1,2,3], n_sim=5000)
-    
+
     # 7b. C-Class (核心信号来源)
     print("  [7b] C-Class ...")
     mask_c = df_all['Group'] == 'C-Class'
@@ -172,13 +172,13 @@ def main():
         ce.run_solar_cycle_subset_scan(df_c, ephem_daily, cycles_sf,
                                         OUTPUT_DIR, 'sf_C_Class',
                                         thresholds_subset=[1,2,3], n_sim=5000)
-    
+
     # 完成
     total_elapsed = time.time() - overall_start
     print("\n" + "=" * 70)
     print(f"全部计算完成! 总耗时: {total_elapsed:.1f}s ({total_elapsed/60:.1f}min)")
     print("=" * 70)
-    
+
     # 列出输出文件
     print("\n输出文件清单:")
     for f in sorted(os.listdir(OUTPUT_DIR)):

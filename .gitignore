@@ -20,3 +20,9 @@ Thumbs.db
 # Environment
 .env
 *.log
+
+# Large runtime caches (distributed separately)
+results/04_asymmetric/sf/cache_data/*
+results/04_asymmetric/sg/cache_data/*
+!results/04_asymmetric/sf/cache_data/.gitkeep
+!results/04_asymmetric/sg/cache_data/.gitkeep

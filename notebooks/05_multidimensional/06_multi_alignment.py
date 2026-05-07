@@ -30,10 +30,10 @@ Phase 2  连珠 CEOS + CTS 检验 (GPU 加速)
   results/05_multidimensional/phase2_triple_alignment_ceos.csv
 
 用法:
-  ~/miniforge3/envs/py313_tian_env/bin/python 06_multi_alignment.py
+  ~/miniforge3/envs/ceos/bin/python 06_multi_alignment.py
 """
 
-import sys, os, time, gc, warnings, hashlib
+import sys, os, time, gc, warnings
 import numpy as np
 import pandas as pd
 from itertools import combinations
@@ -354,8 +354,8 @@ def run_phase2(ds_list, ephem_8p, tests):
 
             # ── 活跃测试预筛 ──
             # 用小规模 CTS 估计 k_exp_screen, 避免漏掉 k_obs 很低但 k_exp 较高的抑制型结果.
-            ds_seed = int(hashlib.md5(ds.encode()).hexdigest(), 16) % 100_000
-            rng = np.random.default_rng(42 + w * 1000 + ds_seed)
+            seed = algo_workers.derive_seed('multi_alignment', ds, w)
+            rng = np.random.default_rng(seed)
             shifts = rng.integers(0, T, size=N_SIM)
             n_screen = min(N_SIM_SCREEN, N_SIM)
             k_screen = _run_cts_batch(sl, si, ephem_7p, w,

@@ -18,7 +18,7 @@
   results/04_asymmetric/sg/sg_xlarge_gt2000_decay_boundary.csv  (黑子 XLarge)
 
 用法:
-  ~/miniforge3/envs/py313_tian_env/bin/python 00b_find_decay_boundary.py
+  ~/miniforge3/envs/ceos/bin/python 00b_find_decay_boundary.py
 """
 
 import sys, os, time
@@ -45,7 +45,7 @@ SOLAR_ROT = 13.2  # 太阳自转速率 (°/天)
 def scan_decay(label, df_path, ephem_path, w_max, out_dir, prefix,
                df=None, ephem_8p=None):
     """对指定数据集扫描 w=1~w_max, 输出 CSV
-    
+
     参数:
         df: 可选, 预加载的 DataFrame (避免重复读文件)
         ephem_8p: 可选, 预加载的 8P 星历矩阵
@@ -53,40 +53,41 @@ def scan_decay(label, df_path, ephem_path, w_max, out_dir, prefix,
     print(f"\n{'='*70}")
     print(f"  {label}: w=1-{w_max}, N_SIM={N_SIM}")
     print(f"{'='*70}")
-    
+
     if df is None:
         df = pd.read_parquet(df_path)
     if ephem_8p is None:
         ephem_8p = np.load(ephem_path)
-    
+
     # 7P: 去掉地球 (index 2)
     col_indices = [0,1,3,4,5,6,7]
     ephem_7p = ephem_8p[:, col_indices]
-    
+
     sun_lons = df['hme_lon'].values.astype(np.float64)
     sun_idxs = df['ephem_idx_daily'].values.astype(int)
     planet_matrix = df[PLANET_COLS_7P].values.astype(np.float64)
     N = len(sun_lons)
     T = ephem_7p.shape[0]
-    
+
     print(f"  数据量 N={N}, 星历天数 T={T}")
     print(f"\n  {'w':>3s} {'窗口':>6s} {'~天数':>6s} | {'Conj_Ratio':>10s} {'Z':>6s} {'p':>8s} | {'Opp_Ratio':>10s} {'Z':>6s} {'p':>8s}")
     print(f"  {'-'*3} {'-'*6} {'-'*6} | {'-'*10} {'-'*6} {'-'*8} | {'-'*10} {'-'*6} {'-'*8}")
-    
-    rng = np.random.default_rng(42)
+
     rows = []
-    
+
     for w in range(1, w_max + 1):
         row = {'Window': w, 'Deg_Window': 2*w, 'Days': round(2*w/SOLAR_ROT, 2)}
-        
+
         for etype in ['Conjunction', 'Opposition']:
             k_obs = algo_workers.count_events_vectorized(sun_lons, planet_matrix, w, etype)
-            
+
             # 批量 CTS 模拟 (GPU 优先, 自动退回 CPU)
+            # v3 (D 项):统一用 derive_seed,与主引擎一致
+            cts_seed = algo_workers.derive_seed('decay_boundary', prefix, label, w, etype)
             k_sims = algo_workers.run_cts_simulation(
                 sun_lons, ephem_7p, sun_idxs, w, etype,
-                N_SIM, algo_type='algo1', n_workers=1, seed=42+w*100+( 0 if etype=='Conjunction' else 1))
-            
+                N_SIM, algo_type='algo1', n_workers=1, seed=cts_seed)
+
             k_exp = k_sims.mean()
             ratio = k_obs / k_exp * 100 if k_exp > 0 else 0
             std = k_sims.std()
@@ -94,27 +95,27 @@ def scan_decay(label, df_path, ephem_path, w_max, out_dir, prefix,
             pl = (np.sum(k_sims <= k_obs) + 1) / (N_SIM + 1)
             pr = (np.sum(k_sims >= k_obs) + 1) / (N_SIM + 1)
             p = min(2 * min(pl, pr), 1.0)
-            
+
             pfx = 'Conj' if etype == 'Conjunction' else 'Opp'
             row[f'{pfx}_k_obs'] = int(k_obs)
             row[f'{pfx}_k_exp'] = round(k_exp, 1)
             row[f'{pfx}_Ratio'] = round(ratio, 2)
             row[f'{pfx}_Z'] = round(z, 2)
             row[f'{pfx}_p'] = round(p, 4)
-        
+
         rows.append(row)
-        
+
         c_sig = '**' if row['Conj_p'] < 0.01 else ('*' if row['Conj_p'] < 0.05 else '')
         o_sig = '**' if row['Opp_p'] < 0.01 else ('*' if row['Opp_p'] < 0.05 else '')
         print(f"  {w:>3d} {row['Deg_Window']:>5d}° {row['Days']:>5.1f}d | "
               f"{row['Conj_Ratio']:>8.1f}%  {row['Conj_Z']:>+5.1f} {row['Conj_p']:>7.4f}{c_sig:2s} | "
               f"{row['Opp_Ratio']:>8.1f}%  {row['Opp_Z']:>+5.1f} {row['Opp_p']:>7.4f}{o_sig:2s}")
-    
+
     # 保存 CSV
     out_file = os.path.join(out_dir, f'{prefix}_decay_boundary.csv')
     pd.DataFrame(rows).to_csv(out_file, index=False)
     print(f"\n  保存: {out_file}")
-    
+
     # 找显著区间和衰减临界点
     sig_windows = [r for r in rows if r['Conj_p'] < 0.05]
     if not sig_windows:
@@ -138,22 +139,22 @@ def scan_decay(label, df_path, ephem_path, w_max, out_dir, prefix,
                 print(f"  📍 Conjunction 信号 w={w_first_sig}-{w_last_sig} 显著 (w=1 不显著 p={rows[0]['Conj_p']:.4f}), 在 w={decay_w['Window']} ({decay_w['Deg_Window']}°, ~{decay_w['Days']}天) 衰减")
             else:
                 print(f"  📍 Conjunction 信号 w={w_first_sig}-{w_max} 显著 (w=1 不显著 p={rows[0]['Conj_p']:.4f})")
-    
+
     return rows
 
 
 def main():
     t0 = time.time()
-    
+
     # ── 耀斑 Total ──
     df_sf = pd.read_parquet(os.path.join(BASE_SF, 'ready_Flare_All.parquet'))
     ephem_8p_sf = np.load(os.path.join(BASE_SG, 'ephem_matrix_8p.npy'))
-    
+
     scan_decay("Flare Total (SF)",
                None, None,
                W_MAX_SF, OUT_SF, 'sf',
                df=df_sf, ephem_8p=ephem_8p_sf)
-    
+
     # ── 耀斑 按 Class 分组 ──
     if 'Group' in df_sf.columns:
         for class_name in ['B-Class', 'C-Class', 'M-Class', 'X-Class']:
@@ -168,16 +169,16 @@ def main():
                        None, None,
                        W_MAX_SF, OUT_SF, f'sf_{safe_name}',
                        df=df_sub, ephem_8p=ephem_8p_sf)
-    
+
     # ── 黑子 Total ──
     df_sg = pd.read_parquet(os.path.join(BASE_SG, 'ready_All.parquet'))
     ephem_8p_sg = np.load(os.path.join(BASE_SG, 'ephem_matrix_8p.npy'))
-    
+
     scan_decay("Sunspot Total (SG)",
                None, None,
                W_MAX_SG, OUT_SG, 'sg',
                df=df_sg, ephem_8p=ephem_8p_sg)
-    
+
     # ── 黑子 按面积分组 ──
     if 'Group' in df_sg.columns:
         for group_name in ['Small <100', 'Medium 100-500', 'Large 500-2000', 'XLarge >2000']:
@@ -192,10 +193,9 @@ def main():
                        None, None,
                        W_MAX_SG, OUT_SG, f'sg_{safe_name}',
                        df=df_sub, ephem_8p=ephem_8p_sg)
-    
+
     print(f"\n总耗时: {time.time()-t0:.0f}s")
 
 
 if __name__ == '__main__':
     main()
-

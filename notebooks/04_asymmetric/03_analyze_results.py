@@ -47,49 +47,49 @@ def analyze_algo12(csv_path, algo_name, dataset_name):
     if not os.path.exists(csv_path):
         print(f"  [跳过] {csv_path} 不存在")
         return
-    
+
     df = pd.read_csv(csv_path)
     print_header(f"{dataset_name} — {algo_name}")
-    
+
     # --- 汇总表: w=1,2,3,5,10,20 的合/冲 Ratio ---
     show_windows = [1, 2, 3, 5, 10, 15, 20]
     available_windows = sorted(df['Window'].unique())
     show_windows = [w for w in show_windows if w in available_windows]
-    
+
     # 只看 Total 分组
     df_total = df[df['Group'] == 'Total']
     if len(df_total) == 0:
         print("  [警告] 没有 Total 分组")
         return
-    
+
     # 透视表
     for stage in sorted(df_total['Stage'].unique()):
         df_s = df_total[df_total['Stage'] == stage]
         print(f"\n  【{stage}】 Total:")
         print(f"  {'Window':>6}  {'Conj_Ratio':>10}  {'Conj_p':>8}  {'Conj_Effect':>12}  │  {'Opp_Ratio':>10}  {'Opp_p':>8}  {'Opp_Effect':>12}")
         print(f"  {'─'*6}  {'─'*10}  {'─'*8}  {'─'*12}  │  {'─'*10}  {'─'*8}  {'─'*12}")
-        
+
         for w in show_windows:
             conj = df_s[(df_s['Window'] == w) & (df_s['Type'] == 'Conjunction')]
             opp = df_s[(df_s['Window'] == w) & (df_s['Type'] == 'Opposition')]
-            
+
             if len(conj) > 0 and len(opp) > 0:
                 cr = conj.iloc[0]
                 orr = opp.iloc[0]
                 c_sig = '***' if cr['p_val'] < 0.001 else ('**' if cr['p_val'] < 0.01 else ('*' if cr['p_val'] < 0.05 else ''))
                 o_sig = '***' if orr['p_val'] < 0.001 else ('**' if orr['p_val'] < 0.01 else ('*' if orr['p_val'] < 0.05 else ''))
                 print(f"  {w:>6}  {cr['Ratio']:>8.1f}%  {cr['p_val']:>8.4f}{c_sig:>1}  {cr['Effect']:>12}  │  {orr['Ratio']:>8.1f}%  {orr['p_val']:>8.4f}{o_sig:>1}  {orr['Effect']:>12}")
-    
+
     # --- 绘制衰减曲线 ---
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
     fig.suptitle(f'{dataset_name} {algo_name}: Ratio vs Window (Total)', fontsize=14, fontweight='bold')
-    
+
     for ax_idx, (stage_filter, stage_label) in enumerate([
         ('Total', 'Total Group') if 'Flare' in df['Stage'].iloc[0] else ('All', 'All Stage'),
         ('Total', 'Total Group')
     ]):
         ax = axes[ax_idx]
-        
+
         if ax_idx == 0:
             # 合 Conjunction
             stage_name = df['Stage'].unique()[0] if len(df['Stage'].unique()) == 1 else 'All'
@@ -112,11 +112,11 @@ def analyze_algo12(csv_path, algo_name, dataset_name):
             ax.set_title('Opposition')
             ax.set_ylabel('Ratio (%)')
             ax.set_xlabel('Window w (°)')
-        
+
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         ax.legend()
         ax.grid(True, alpha=0.3)
-    
+
     plt.tight_layout()
     ds_en = 'flare' if 'flare' in dataset_name.lower() else 'sunspot'
     fig_name = f'{ds_en}_{algo_name.lower().replace(" ", "_")}_decay.png'
@@ -135,18 +135,18 @@ def analyze_groups(csv_path, dataset_name, algo_name):
         return
     df = pd.read_csv(csv_path)
     print_header(f"{dataset_name} — {algo_name} 各分组对比 (w=1-5)")
-    
+
     stage = df['Stage'].unique()[0] if len(df['Stage'].unique()) == 1 else 'All'
     df_s = df[df['Stage'] == stage] if stage in df['Stage'].values else df
-    
+
     groups = [g for g in df_s['Group'].unique() if g != 'Total']
     groups.append('Total')
-    
+
     for w in [1, 2, 3, 5]:
         print(f"\n  w={w}°:")
         print(f"  {'Group':>20}  {'Conj_Ratio':>10}  {'Opp_Ratio':>10}  {'Asym':>7}  {'Conj_p':>8}  {'Opp_p':>8}")
         print(f"  {'─'*20}  {'─'*10}  {'─'*10}  {'─'*7}  {'─'*8}  {'─'*8}")
-        
+
         for g in groups:
             conj = df_s[(df_s['Group'] == g) & (df_s['Window'] == w) & (df_s['Type'] == 'Conjunction')]
             opp = df_s[(df_s['Group'] == g) & (df_s['Window'] == w) & (df_s['Type'] == 'Opposition')]
@@ -168,42 +168,42 @@ def analyze_subsets(dir_path, prefix, dataset_name):
     """分析 255 子集扫描结果"""
     f_earth = os.path.join(dir_path, f'{prefix}_subset_scan_with_earth.csv')
     f_no_earth = os.path.join(dir_path, f'{prefix}_subset_scan_no_earth.csv')
-    
+
     if not os.path.exists(f_earth) or not os.path.exists(f_no_earth):
         return
-    
+
     df_e = pd.read_csv(f_earth)
     df_ne = pd.read_csv(f_no_earth)
-    
+
     print_header(f"{dataset_name} — 255 子集扫描分析")
-    
+
     for w in [1, 2, 3]:
         de = df_e[df_e['Window'] == w]
         dne = df_ne[df_ne['Window'] == w]
-        
+
         print(f"\n  w={w}°:")
-        
+
         # 含地球 Top 5 by Asym_Amp
         top_e = de.nlargest(5, 'Asym_Amp')
         print(f"  含地球 Top-5 (by Conj-Opp 不对称):")
         for _, r in top_e.iterrows():
             print(f"    {r['Label']:>30}  Conj={r['Conj_Ratio']:>6.1f}%  Opp={r['Opp_Ratio']:>6.1f}%  Asym={r['Asym_Amp']:>+6.1f}")
-        
+
         # 不含地球 Top 5
         top_ne = dne.nlargest(5, 'Asym_Amp')
         print(f"  不含地球 Top-5:")
         for _, r in top_ne.iterrows():
             print(f"    {r['Label']:>30}  Conj={r['Conj_Ratio']:>6.1f}%  Opp={r['Opp_Ratio']:>6.1f}%  Asym={r['Asym_Amp']:>+6.1f}")
-        
+
         # 正向比例
         pos_e = (de['Asym_Amp'] > 0).sum() / len(de) * 100
         pos_ne = (dne['Asym_Amp'] > 0).sum() / len(dne) * 100
         print(f"  正向比例: 含地球 {pos_e:.1f}% ({(de['Asym_Amp']>0).sum()}/{len(de)}) | 不含地球 {pos_ne:.1f}% ({(dne['Asym_Amp']>0).sum()}/{len(dne)})")
-    
+
     # 绘图: 含/不含地球的 Asym_Amp 分布
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
     fig.suptitle(f'{dataset_name}: Subset CEOS Asymmetry Distribution (w=2)', fontsize=13, fontweight='bold')
-    
+
     for ax, df_sub, title in zip(axes, [df_e, df_ne], ['With Earth (128 subsets)', 'Without Earth (127 subsets)']):
         d = df_sub[df_sub['Window'] == 2]['Asym_Amp']
         ax.hist(d, bins=30, color='steelblue', alpha=0.7, edgecolor='white')
@@ -213,7 +213,7 @@ def analyze_subsets(dir_path, prefix, dataset_name):
         ax.set_xlabel('Asym (Conj_Ratio - Opp_Ratio)')
         ax.set_ylabel('Count')
         ax.legend()
-    
+
     plt.tight_layout()
     ds_en = 'flare' if 'flare' in dataset_name.lower() else 'sunspot'
     fig_path = os.path.join(FIG_DIR, f'{ds_en}_subset_asym_dist.png')
@@ -229,15 +229,15 @@ def analyze_solar_cycles(csv_path, dataset_name):
     """太阳周分段结果分析"""
     if not os.path.exists(csv_path):
         return
-    
+
     df = pd.read_csv(csv_path)
     print_header(f"{dataset_name} — 太阳周分段分析")
-    
+
     # 重点看 Venus 和 Mars (w=2, Conjunction)
     for planet in ['Venus', 'Mars', 'Jupiter', 'Saturn']:
         dp = df[(df['Planet'] == planet) & (df['Window'] == 2) & (df['Type'] == 'Conjunction')]
         if len(dp) == 0: continue
-        
+
         n_pos = (dp['Ratio'] > 100).sum()
         n_total = len(dp)
         print(f"\n  {planet} (w=2, Conjunction):")
@@ -246,18 +246,18 @@ def analyze_solar_cycles(csv_path, dataset_name):
             marker = '✓' if r['Ratio'] > 100 else '✗'
             print(f"  {r['SC']:>6}  {r['N_Records']:>7}  {r['Ratio']:>7.1f}%  {r['k_obs']:>6}  {r['k_exp']:>8.1f}  {marker}")
         print(f"  正向一致: {n_pos}/{n_total} ({n_pos/n_total*100:.0f}%)")
-    
+
     # 绘图: Venus/Mars 各太阳周的 Ratio
     planets_to_plot = ['Venus', 'Mars', 'Jupiter']
     fig, axes = plt.subplots(len(planets_to_plot), 1, figsize=(12, 4*len(planets_to_plot)))
     if len(planets_to_plot) == 1:
         axes = [axes]
     fig.suptitle(f'{dataset_name}: Solar Cycle Conjunction Ratio (w=2)', fontsize=14, fontweight='bold')
-    
+
     for ax, planet in zip(axes, planets_to_plot):
         dp = df[(df['Planet'] == planet) & (df['Window'] == 2) & (df['Type'] == 'Conjunction')]
         if len(dp) == 0: continue
-        
+
         x = range(len(dp))
         colors = ['green' if r > 100 else 'red' for r in dp['Ratio']]
         ax.bar(x, dp['Ratio'] - 100, color=colors, alpha=0.7, edgecolor='gray')
@@ -267,7 +267,7 @@ def analyze_solar_cycles(csv_path, dataset_name):
         ax.set_ylabel('Ratio - 100%')
         ax.set_title(f'{planet}')
         ax.grid(True, alpha=0.3, axis='y')
-    
+
     plt.tight_layout()
     ds_en = 'flare' if 'flare' in dataset_name.lower() else 'sunspot'
     fig_path = os.path.join(FIG_DIR, f'{ds_en}_solar_cycle_bars.png')
@@ -283,13 +283,13 @@ def analyze_kuiper(csv_path, dataset_name):
     """Kuiper 检验结果汇总"""
     if not os.path.exists(csv_path):
         return
-    
+
     df = pd.read_csv(csv_path)
     print_header(f"{dataset_name} — Kuiper 检验 Top-10")
-    
+
     # 只看 Total 分组
     df_t = df[df['Group'] == 'Total'].sort_values('V_statistic', ascending=False)
-    
+
     print(f"  {'Stage':>15}  {'Planet':>10}  {'N':>7}  {'V':>8}  {'p':>12}  {'Sig':>4}")
     for _, r in df_t.head(10).iterrows():
         planet = PLANET_MAP.get(r['Planet'], r['Planet'])
@@ -303,7 +303,7 @@ def main():
     print("=" * 70)
     print("  CEOS 计算结果分析报告")
     print("=" * 70)
-    
+
     # === Flare (All Total) ===
     analyze_algo12(os.path.join(SF_DIR, 'sf_algo1_total_pairs.csv'), 'Algo 1 (Total Pairs)', 'Flare')
     analyze_algo12(os.path.join(SF_DIR, 'sf_algo2_at_least_one.csv'), 'Algo 2 (At Least One)', 'Flare')
@@ -311,7 +311,7 @@ def main():
     analyze_subsets(SF_DIR, 'sf', 'Flare')
     analyze_solar_cycles(os.path.join(SF_DIR, 'sf_solar_cycle_segment.csv'), 'Flare')
     analyze_kuiper(os.path.join(SF_DIR, 'sf_algo_kuiper_test.csv'), 'Flare')
-    
+
     # === Flare (per X-ray Class) ===
     for class_name in ['B-Class', 'C-Class', 'M-Class', 'X-Class']:
         safe = class_name.replace('-', '_')
@@ -325,7 +325,7 @@ def main():
         f_cycle = os.path.join(SF_DIR, f'{prefix}_solar_cycle_segment.csv')
         if os.path.exists(f_cycle):
             analyze_solar_cycles(f_cycle, label)
-    
+
     # === Sunspot ===
     analyze_algo12(os.path.join(SG_DIR, 'sg_algo1_total_pairs.csv'), 'Algo 1 (Total Pairs)', 'Sunspot')
     analyze_algo12(os.path.join(SG_DIR, 'sg_algo2_at_least_one.csv'), 'Algo 2 (At Least One)', 'Sunspot')
@@ -333,14 +333,14 @@ def main():
     analyze_subsets(SG_DIR, 'sg', 'Sunspot')
     analyze_solar_cycles(os.path.join(SG_DIR, 'sg_solar_cycle_segment.csv'), 'Sunspot')
     analyze_kuiper(os.path.join(SG_DIR, 'sg_algo_kuiper_test.csv'), 'Sunspot')
-    
+
     # === 总结 ===
     print_header("输出的图表文件")
     if os.path.exists(FIG_DIR):
         for f in sorted(os.listdir(FIG_DIR)):
             if f.endswith('.png'):
                 print(f"  📊 {os.path.join(FIG_DIR, f)}")
-    
+
     print("\n✅ 分析完成!")
 
 

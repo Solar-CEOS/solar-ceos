@@ -24,6 +24,8 @@ Usage:
 from __future__ import annotations
 
 import os
+import sys
+from pathlib import Path
 from typing import Iterable
 
 os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib")
@@ -33,12 +35,16 @@ import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+from matplotlib.patches import Rectangle
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from _style.figstyle import apply_acta_style, axis_unit, figsize_double, save_dual
 
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(THIS_DIR, "..", ".."))
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "results", "05_multidimensional")
-FIG_DIR = os.path.join(PROJECT_ROOT, "submission", "figures_2026")
 FIG07_FIG_BASENAME = "Fig07_subset_scan_combined"
 FIG07_SUMMARY_CSV = "Fig07_subset_scan_summary.csv"
 FIG07_TABLE_NAMES = {
@@ -54,12 +60,14 @@ SG_CSV = os.path.join(PROJECT_ROOT, "results", "04_asymmetric", "sg", "sg_subset
 FDR_CSV = os.path.join(PROJECT_ROOT, "results", "05_multidimensional", "fdr_audit", "subset_scan_fdr.csv")
 
 REF_WINDOW = 2
+RC_YLIM = (94.0, 124.0)
+RC_TICKS = [95, 100, 105, 110, 115, 120]
 PLANET_ORDER = ["Mer", "Ven", "Mar", "Jup", "Sat", "Ura", "Nep"]
 PLANET_FULL_NAMES = {
     "Mer": "Mercury", "Ven": "Venus", "Mar": "Mars",
     "Jup": "Jupiter", "Sat": "Saturn", "Ura": "Uranus", "Nep": "Neptune",
 }
-DATASET_LABELS = {"sf": "Flare", "sg": "Sunspot"}
+DATASET_LABELS = {"sf": "Flare", "sg": "SG"}
 SUBSET_ROLE_LABELS = {
     "best_single": "Best single",
     "best_multi": "Best multi",
@@ -74,6 +82,87 @@ def canonical_label(members: Iterable[str]) -> str:
 
 def expand_label(label: str) -> str:
     return "+".join(PLANET_FULL_NAMES.get(p, p) for p in label.split("+"))
+
+
+def add_legend(ax: plt.Axes, **kwargs):
+    defaults = {
+        "frameon": True,
+        "borderpad": 0.24,
+        "handlelength": 1.2,
+        "handletextpad": 0.35,
+        "labelspacing": 0.25,
+        "borderaxespad": 0.28,
+    }
+    defaults.update(kwargs)
+    legend = ax.legend(**defaults)
+    frame = legend.get_frame()
+    frame.set_facecolor("white")
+    frame.set_edgecolor("#bdbdbd")
+    frame.set_linewidth(0.5)
+    frame.set_alpha(1.0)
+    return legend
+
+
+def compact_axis(ax: plt.Axes, *, tick_size: float = 7.0, label_size: float = 8.0) -> None:
+    ax.tick_params(axis="both", which="major", labelsize=tick_size, pad=1.0)
+    ax.xaxis.label.set_size(label_size)
+    ax.yaxis.label.set_size(label_size)
+    ax.title.set_size(9.0)
+
+
+def annotate_nested_key_nodes(ax: plt.Axes, nested_path: pd.DataFrame) -> None:
+    """Label every nested-curve point with the planet added at that step.
+
+    Middle steps have closely-spaced R_C values, so labels alternate above/below
+    the line and carry a thin white bbox to stay legible over the gray excess
+    bars. The bbox is solid white (alpha=1.0) — EPS-safe.
+    """
+    sorted_steps = nested_path.sort_values("Step")
+    prev_members: set[str] = set()
+    label_bbox = {
+        "boxstyle": "round,pad=0.15",
+        "facecolor": "white",
+        "edgecolor": "none",
+    }
+    for _, row in sorted_steps.iterrows():
+        step = int(row["Step"])
+        members = set(str(row["Subset_Label"]).split("+"))
+        added = members - prev_members
+        prev_members = members
+        if not added:
+            continue
+        planet = next(iter(added))
+        full = PLANET_FULL_NAMES.get(planet, planet)
+        label = full if step == 1 else f"+{full}"
+        ratio = float(row["Conj_Ratio"])
+        # User-specified L/R pattern: 1R 2R 3L 4R 5L 6L 7L plus per-step
+        # overrides for steps 3 (above-left to clear the curve) and 4
+        # (below-right to clear the tall step-4 bar top). R = above-right,
+        # L = below-left.
+        side_pattern = {1: "R", 2: "R", 3: "L", 4: "R", 5: "L", 6: "L", 7: "L"}
+        side = side_pattern.get(step, "R")
+        if side == "R":
+            xytext, ha, va = (3, 5), "left", "bottom"
+        else:
+            xytext, ha, va = (-3, -5), "right", "top"
+        if step == 3:  # +Jupiter: 翻转 va,文本整体落到曲线下方
+            xytext, ha, va = (-3, -3), "right", "top"
+        elif step == 4:  # +Mercury: 翻转 va 落到曲线上方,y 继续收小拉远柱顶
+            xytext, ha, va = (6, -1), "left", "bottom"
+        elif step in (5, 6, 7):  # +Saturn/+Uranus/+Neptune: 整体右移,松开柱子左边缘
+            xytext, ha, va = (0, -5), "right", "top"
+        ax.annotate(
+            label,
+            xy=(step, ratio),
+            xytext=xytext,
+            textcoords="offset points",
+            ha=ha,
+            va=va,
+            fontsize=6.5,
+            color="#555555",
+            bbox=label_bbox,
+            zorder=6,
+        )
 
 
 def load_subset_data(csv_path: str, dataset_key: str) -> pd.DataFrame:
@@ -251,7 +340,7 @@ def plot_distribution_panel(ax: plt.Axes, df_ref: pd.DataFrame) -> None:
         ax.scatter(
             x + offsets[dataset] + jitter,
             y,
-            s=16,
+            s=12,
             color=point_colors[dataset],
             label=DATASET_LABELS[dataset],
             zorder=3,
@@ -271,19 +360,25 @@ def plot_distribution_panel(ax: plt.Axes, df_ref: pd.DataFrame) -> None:
             )
             for patch in bp["boxes"]:
                 patch.set_facecolor(light_colors[dataset])
+                patch.set_edgecolor(colors[dataset])
+                patch.set_linewidth(0.7)
             for element in ["whiskers", "caps", "medians"]:
                 for line in bp[element]:
                     line.set_color(colors[dataset])
+                    line.set_linewidth(0.7)
 
     ax.axhline(100, color="gray", linestyle="--", linewidth=1.0, zorder=2)
     ax.set_xlim(0.4, 7.6)
     ax.set_xticks(range(1, 8))
     ax.set_xticklabels([str(i) for i in range(1, 8)])
-    ax.set_xlabel("Planets in subset ($N_P$)")
-    ax.set_ylabel("Conjunction ratio $R_C$ (%)")
-    ax.set_title("(a) All 127 subsets at $w=2^\\circ$")
-    ax.legend(frameon=False, loc="upper right")
+    ax.set_xlabel("Planets in subset\n($N_P$)")
+    ax.set_ylabel(axis_unit(r"R_{\mathrm{C}}", r"\%"))
+    ax.set_ylim(*RC_YLIM)
+    ax.set_yticks(RC_TICKS)
+    ax.set_title("(a) $R_C$ distribution", fontweight="normal")
+    add_legend(ax, loc="upper right", fontsize=7)
     ax.grid(axis="y", color="#e5e7e9", linewidth=0.8)
+    compact_axis(ax)
 
 
 def plot_asym_panel(ax: plt.Axes, df_ref: pd.DataFrame) -> None:
@@ -301,7 +396,7 @@ def plot_asym_panel(ax: plt.Axes, df_ref: pd.DataFrame) -> None:
         ax.scatter(
             x + offsets[dataset] + jitter,
             y,
-            s=16,
+            s=12,
             color=point_colors[dataset],
             label=DATASET_LABELS[dataset],
             zorder=3,
@@ -321,63 +416,100 @@ def plot_asym_panel(ax: plt.Axes, df_ref: pd.DataFrame) -> None:
             )
             for patch in bp["boxes"]:
                 patch.set_facecolor(light_colors[dataset])
+                patch.set_edgecolor(colors[dataset])
+                patch.set_linewidth(0.7)
             for element in ["whiskers", "caps", "medians"]:
                 for line in bp[element]:
                     line.set_color(colors[dataset])
+                    line.set_linewidth(0.7)
 
     ax.axhline(0, color="gray", linestyle="--", linewidth=1.0, zorder=2)
     ax.set_xlim(0.4, 7.6)
     ax.set_xticks(range(1, 8))
     ax.set_xticklabels([str(i) for i in range(1, 8)])
-    ax.set_xlabel("Planets in subset ($N_P$)")
-    ax.set_ylabel("Asymmetric amplitude Asym (%)")
-    ax.set_title("(b) Asym distribution at $w=2^\\circ$")
-    ax.legend(frameon=False, loc="upper right")
+    ax.set_xlabel("Planets in subset\n($N_P$)")
+    ax.set_ylabel(axis_unit(r"\mathrm{Asym}", r"\%"))
+    ax.set_title("(b) Asym distribution", fontweight="normal")
+    add_legend(ax, loc="upper right", fontsize=7)
     ax.grid(axis="y", color="#e5e7e9", linewidth=0.8)
+    compact_axis(ax)
 
 
-def plot_nested_panel(ax: plt.Axes, nested_path: pd.DataFrame, fdr_q: dict[int, float] | None = None) -> None:
+def plot_nested_panel(ax: plt.Axes, nested_path: pd.DataFrame) -> None:
     x = nested_path["Step"].to_numpy()
     excess = nested_path["Conj_Excess"].to_numpy()
     ratio = nested_path["Conj_Ratio"].to_numpy()
 
-    ax.bar(x, excess, width=0.65, color="#d5dbdb", edgecolor="#7f8c8d", linewidth=0.8, zorder=2)
-    ax.set_xlabel("Nested subset ranked by single-planet $R_C$")
-    ax.set_ylabel("Observed minus CTS expected count")
+    rc_min, rc_max = RC_YLIM
+    count_min = 0.0
+    count_max = float(np.ceil(float(excess.max()) * 1.15 / 50.0) * 50.0)
+
+    def count_to_ratio(count):
+        return rc_min + (np.asarray(count) - count_min) * (rc_max - rc_min) / (count_max - count_min)
+
+    def ratio_to_count(ratio_value):
+        return count_min + (np.asarray(ratio_value) - rc_min) * (count_max - count_min) / (rc_max - rc_min)
+
+    bar_bottom = float(count_to_ratio(0.0))
+    bar_top = count_to_ratio(excess)
+    ax.set_axisbelow(True)
+    ax.grid(axis="y", color="#e5e7e9", linewidth=0.8, zorder=0)
+    ax.bar(
+        x,
+        bar_top - bar_bottom,
+        bottom=bar_bottom,
+        width=0.65,
+        color="#d5dbdb",
+        edgecolor="#7f8c8d",
+        linewidth=0.8,
+        zorder=2,
+    )
+    ax_count = ax.secondary_yaxis("right", functions=(ratio_to_count, count_to_ratio))
+    ax_count.set_ylabel(r"$N_{\mathrm{obs}}-N_{\mathrm{CTS}}$", labelpad=1.0)
+    ax_count.yaxis.label.set_size(7.0)
+    ax_count.tick_params(axis="y", labelsize=7.0, pad=0.5)
+    count_tick_step = 100 if count_max >= 300 else 50
+    ax_count.set_yticks(np.arange(0, count_max + count_tick_step, count_tick_step))
+
+    ratio_line, = ax.plot(
+        x,
+        ratio,
+        color="#c0392b",
+        marker="o",
+        markersize=4.6,
+        linewidth=2.0,
+        label=axis_unit(r"R_{\mathrm{C}}", r"\%"),
+        zorder=4,
+    )
+    ax.axhline(100, color="gray", linestyle="--", linewidth=1.0, zorder=1)
+    ax.set_ylabel(axis_unit(r"R_{\mathrm{C}}", r"\%"), color="#c0392b")
+    ax.tick_params(axis="y", labelcolor="#c0392b", labelsize=7, pad=1.0)
+    ax.set_ylim(*RC_YLIM)
+    ax.set_yticks(RC_TICKS)
+
+    ax.set_xlabel("Nested subset ranked by\nsingle-planet $R_C$")
     ax.set_xticks(x)
     ax.set_xticklabels([str(v) for v in x])
-    ax.set_title("(c) Coverage increases while relative enrichment dilutes")
-    ax.grid(axis="y", color="#e5e7e9", linewidth=0.8)
+    ax.set_title("(c) Nested sequence", fontweight="normal")
+    annotate_nested_key_nodes(ax, nested_path)
 
-    ax2 = ax.twinx()
-    ax2.plot(x, ratio, color="#c0392b", marker="o", linewidth=2.0, zorder=4)
-    ax2.axhline(100, color="gray", linestyle="--", linewidth=1.0, zorder=1)
-    ax2.set_ylabel("$R_C$ (%)", color="#c0392b")
-    ax2.tick_params(axis="y", labelcolor="#c0392b")
-    ax2.set_ylim(min(100, ratio.min() - 2), ratio.max() + 3)
-
-    annotations = {
-        1: {"label": "Venus",        "xytext": (20, 22),  "ha": "center"},
-        2: {"label": "Venus+Mars",   "xytext": (40, 5),   "ha": "center"},
-        5: {"label": "Top 5 subset", "xytext": (-15, 22), "ha": "center"},
-        int(x[-1]): {"label": "All 7 planets", "xytext": (-20, -28), "ha": "center"},
-    }
-    for step, cfg in annotations.items():
-        y = float(nested_path.loc[nested_path["Step"] == step, "Conj_Ratio"].iloc[0])
-        ann_text = f"{cfg['label']}\n{y:.2f}%"
-        if fdr_q and step in fdr_q:
-            ann_text += f"\n$q$ = {fdr_q[step]:.3f}"
-        ax2.annotate(
-            ann_text,
-            xy=(step, y),
-            xytext=cfg["xytext"],
-            textcoords="offset points",
-            ha=cfg["ha"],
-            fontsize=8,
-            color="#922b21",
-            bbox=dict(boxstyle="round,pad=0.18", facecolor="white", edgecolor="none"),
-            arrowprops=dict(arrowstyle="-", color="#922b21", linewidth=0.8, shrinkA=0, shrinkB=4),
-        )
+    bar_handle = Rectangle(
+        (0, 0), 1, 1,
+        facecolor="#d5dbdb",
+        edgecolor="#7f8c8d",
+        linewidth=0.8,
+        label=r"$N_{\mathrm{obs}}-N_{\mathrm{CTS}}$",
+    )
+    ratio_handle = Line2D(
+        [0], [0],
+        color="#c0392b",
+        marker="o",
+        markersize=4.6,
+        linewidth=2.0,
+        label=axis_unit(r"R_{\mathrm{C}}", r"\%"),
+    )
+    add_legend(ax, handles=[bar_handle, ratio_handle], loc="upper right", fontsize=5.8, handlelength=1.0)
+    compact_axis(ax)
 
 
 def plot_window_panel(ax: plt.Axes, window_df: pd.DataFrame, role_labels: dict[str, str]) -> None:
@@ -386,27 +518,49 @@ def plot_window_panel(ax: plt.Axes, window_df: pd.DataFrame, role_labels: dict[s
         "best_multi": "#d68910",
         "all_7": "#566573",
     }
-    flare_only = window_df[window_df["Dataset"] == "sf"].copy()
-
     for role in ["best_single", "best_multi", "all_7"]:
-        grp = flare_only[flare_only["Subset_Role"] == role].sort_values("Window")
+        flare = window_df[
+            (window_df["Dataset"] == "sf") & (window_df["Subset_Role"] == role)
+        ].sort_values("Window")
         ax.plot(
-            grp["Window"],
-            grp["Conj_Ratio"],
-            marker="o",
+            flare["Window"],
+            flare["Conj_Ratio"],
             linewidth=2.0,
             color=colors[role],
-            label=role_labels[role],
+            linestyle="-",
+            zorder=3,
+        )
+        sg = window_df[
+            (window_df["Dataset"] == "sg") & (window_df["Subset_Role"] == role)
+        ].sort_values("Window")
+        ax.plot(
+            sg["Window"],
+            sg["Conj_Ratio"],
+            linewidth=1.4,
+            color=colors[role],
+            linestyle=(0, (3, 1.5)),
+            solid_capstyle="round",
+            zorder=2,
         )
 
-    ax.axhline(100, color="gray", linestyle="--", linewidth=1.0)
-    ax.set_xlabel("Window width $w$ (deg)")
-    ax.set_ylabel("Conjunction ratio $R_C$ (%)")
-    ax.set_xticks(sorted(flare_only["Window"].unique()))
-    ax.set_title("(d) Window sensitivity for selected flare subsets")
-    ax.set_ylim(99.0, 128.2)
-    ax.legend(frameon=False, loc="upper right", bbox_to_anchor=(0.98, 0.98), fontsize=8)
+    ax.axhline(100, color="gray", linestyle=":", linewidth=1.0)
+    ax.set_xlabel(r"Window half-width" "\n" r"$w/(^\circ)$")
+    ax.set_ylabel(axis_unit(r"R_{\mathrm{C}}", r"\%"))
+    ax.set_xticks(sorted(window_df["Window"].unique()))
+    ax.set_title("(d) Window scan", fontweight="normal")
+    ax.set_ylim(*RC_YLIM)
+    ax.set_yticks(RC_TICKS)
+
+    handles = [
+        Line2D([0], [0], color=colors["best_single"], lw=2.0, label=role_labels["best_single"]),
+        Line2D([0], [0], color=colors["best_multi"], lw=2.0, label=role_labels["best_multi"]),
+        Line2D([0], [0], color=colors["all_7"], lw=2.0, label=role_labels["all_7"]),
+        Line2D([0], [0], color="#555555", lw=1.6, linestyle="-", label="Flare"),
+        Line2D([0], [0], color="#555555", lw=1.6, linestyle=(0, (3, 1.5)), label="SG"),
+    ]
+    add_legend(ax, handles=handles, loc="center right", ncol=1, fontsize=5.8, handlelength=2.0)
     ax.grid(axis="y", color="#e5e7e9", linewidth=0.8)
+    compact_axis(ax)
 
 
 def save_tables(tables: dict[str, pd.DataFrame]) -> None:
@@ -430,7 +584,6 @@ def save_tables(tables: dict[str, pd.DataFrame]) -> None:
 
 def main() -> None:
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-    os.makedirs(FIG_DIR, exist_ok=True)
 
     df_sf = load_subset_data(SF_CSV, "sf")
     df_sg = load_subset_data(SG_CSV, "sg")
@@ -459,37 +612,50 @@ def main() -> None:
     }
     save_tables(tables)
 
-    # ── Load FDR q-values for nested path annotations ──
-    fdr_q: dict[int, float] = {}
-    if os.path.exists(FDR_CSV):
-        fdr_df = pd.read_csv(FDR_CSV)
-        fdr_sf = fdr_df[
-            (fdr_df["Source_File"] == "sf_subset_scan_no_earth.csv")
-            & (fdr_df["Window"] == REF_WINDOW)
-        ]
-        for _, row in nested_path.iterrows():
-            match = fdr_sf[fdr_sf["Label"] == row["Subset_Label"]]
-            if len(match) == 1:
-                fdr_q[int(row["Step"])] = float(match.iloc[0]["Conj_q_window"])
+    # Staleness check: raw Conj_p in FDR table must match nested_path's Conj_p
+    # exactly (both come from the same sf_subset_scan_no_earth.csv). q-values
+    # themselves no longer appear in the figure (now reported only in body
+    # text), but the cross-table consistency check is still worth keeping.
+    if not os.path.exists(FDR_CSV):
+        raise FileNotFoundError(
+            f"Missing {FDR_CSV}; run 07_fdr_audit.py before plotting Fig07."
+        )
+    fdr_df = pd.read_csv(FDR_CSV)
+    fdr_sf = fdr_df[
+        (fdr_df["Source_File"] == "sf_subset_scan_no_earth.csv")
+        & (fdr_df["Window"] == REF_WINDOW)
+    ]
+    max_p_diff = 0.0
+    for _, row in nested_path.iterrows():
+        match = fdr_sf[fdr_sf["Label"] == row["Subset_Label"]]
+        if len(match) == 1:
+            diff = abs(float(match.iloc[0]["Conj_p"]) - float(row["Conj_p"]))
+            max_p_diff = max(max_p_diff, diff)
+    if max_p_diff > 1e-9:
+        raise ValueError(
+            f"Fig07 FDR table is stale: max raw-p mismatch = {max_p_diff:.3g}. "
+            "Rerun 07_fdr_audit.py, then rerun this script."
+        )
+    print(f"[FDR] validated: {FDR_CSV}")
 
-    fig, axes = plt.subplots(1, 4, figsize=(23, 6.1), gridspec_kw={"width_ratios": [1.3, 1.3, 1.1, 1.0]})
-    fig.subplots_adjust(wspace=0.38)
+    apply_acta_style("double")
+    fig, axes = plt.subplots(
+        1, 4,
+        figsize=figsize_double(aspect=0.52),
+        gridspec_kw={"width_ratios": [0.92, 0.92, 1.24, 1.02]},
+    )
+    fig.subplots_adjust(left=0.075, right=0.985, top=0.86, bottom=0.22, wspace=0.62)
     role_display_labels = {
         "best_single": expand_label(best_single_label),
-        "best_multi": expand_label(best_multi_label),
-        "all_7": "All 7 planets",
+        "best_multi": "Ven+Mars",
+        "all_7": "All 7",
     }
     plot_distribution_panel(axes[0], df_ref)
     plot_asym_panel(axes[1], df_ref)
-    plot_nested_panel(axes[2], nested_path, fdr_q=fdr_q)
+    plot_nested_panel(axes[2], nested_path)
     plot_window_panel(axes[3], window_sensitivity, role_display_labels)
 
-    for ext in ["eps", "png"]:
-        out_path = os.path.join(OUTPUT_DIR, f"{FIG07_FIG_BASENAME}.{ext}")
-        plt.savefig(out_path, format=ext, dpi=300, bbox_inches="tight")
-
-    fig_path = os.path.join(FIG_DIR, f"{FIG07_FIG_BASENAME}.eps")
-    plt.savefig(fig_path, format="eps", dpi=300, bbox_inches="tight")
+    save_dual(fig, os.path.join(OUTPUT_DIR, f"{FIG07_FIG_BASENAME}.eps"))
     plt.close(fig)
 
     print("Formal subset-scan analysis completed.")

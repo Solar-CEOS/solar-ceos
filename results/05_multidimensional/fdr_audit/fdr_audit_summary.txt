@@ -17,13 +17,13 @@ Family definitions
 
 1. Main window scan (algo1 total-pairs)
 --------------------------------------------------
-- Flare Total, w=2 conj: p=0.003280, q_group_type=0.013650, q_group_all=0.027299, q_file=0.072799
-- Flare C-Class, w=2 conj: p=0.001160, q_group_type=0.013800, q_group_all=0.027599, q_file=0.057599
+- Flare Total, w=2 conj: p=0.002360, q_group_type=0.010114, q_group_all=0.020228, q_file=0.064362
+- Flare C-Class, w=2 conj: p=0.001480, q_group_type=0.013200, q_group_all=0.026399, q_file=0.052799
 
 2. Window scan (algo2 at-least-one)
 --------------------------------------------------
-- Flare Total, w=2 conj: p=0.029279, q_group_type=0.285337, q_group_all=0.305641, q_file=0.381762
-- Flare C-Class, w=2 conj: p=0.007200, q_group_type=0.215996, q_group_all=0.313376, q_file=0.311994
+- Flare Total, w=2 conj: p=0.029439, q_group_type=0.273937, q_group_all=0.305641, q_file=0.376560
+- Flare C-Class, w=2 conj: p=0.007280, q_group_type=0.218396, q_group_all=0.312139, q_file=0.281328
 
 3. Fig06 phase rose
 --------------------------------------------------
@@ -32,54 +32,54 @@ Family definitions
 
 4. Fig07 subset scan (Flare Total, w=2)
 --------------------------------------------------
-- Ven: Conj p=0.0214, q_window=0.067945, q_combined=0.135890
-- Ven+Mar: Conj p=0.0044, q_window=0.030079, q_combined=0.060158
-- Mer+Ven+Mar+Jup+Sat+Ura+Nep: Conj p=0.0293, q_window=0.074422, q_combined=0.148844
-- Jup+Sat: Conj p=0.0778, q_window=0.143197, q_combined=0.259938
-- Surviving at w=2: conj 31/127, opp 0/127
+- Ven: Conj p=0.0209, q_window=0.064739, q_combined=0.129478
+- Ven+Mar: Conj p=0.0034, q_window=0.026987, q_combined=0.053975
+- Mer+Ven+Mar+Jup+Sat+Ura+Nep: Conj p=0.0305, q_window=0.077470, q_combined=0.154940
+- Jup+Sat: Conj p=0.0802, q_window=0.147614, q_combined=0.265216
+- Surviving at w=2: conj 32/127, opp 0/127
 
 4b. C-Class single-planet ranking (q_single7, w=2)
 --------------------------------------------------
-- Ven: Conj p=0.0020, q_single7=0.014000 ***
-- Mer: Conj p=0.0250, q_single7=0.087500 
-- Sat: Conj p=0.0930, q_single7=0.217000 
-- Mar: Conj p=0.1347, q_single7=0.235725 
-- Nep: Conj p=0.5505, q_single7=0.750283 
-- Jup: Conj p=0.6431, q_single7=0.750283 
-- Ura: Conj p=0.9218, q_single7=0.921800 
+- Ven: Conj p=0.0026, q_single7=0.018200 ***
+- Mer: Conj p=0.0240, q_single7=0.084000
+- Sat: Conj p=0.0929, q_single7=0.216767
+- Mar: Conj p=0.1322, q_single7=0.231350
+- Nep: Conj p=0.5463, q_single7=0.751100
+- Jup: Conj p=0.6438, q_single7=0.751100
+- Ura: Conj p=0.9178, q_single7=0.917800
 
 5. Fig08 solar-cycle stars (Flare, w=2)
 --------------------------------------------------
-- Ven SC24: Conj p=0.0744, q_dataset_window=0.238080
-- Ven+Mar SC24: Conj p=0.0248, q_dataset_window=0.132267
-- Jup+Sat SC24: Conj p=0.0236, q_dataset_window=0.132267
-- Fisher Ven: p=0.079858, q=0.106477
-- Fisher Ven+Mar: p=0.027373, q=0.079730
-- Fisher Jup+Sat: p=0.197767, q=0.197767
-- Fisher Mer+Ven+Mar+Jup+Sat+Ura+Nep: p=0.039865, q=0.079730
+- Ven SC24: Conj p=0.0692, q_dataset_window=0.221440
+- Ven+Mar SC24: Conj p=0.0240, q_dataset_window=0.164267
+- Jup+Sat SC24: Conj p=0.0308, q_dataset_window=0.164267
+- Fisher Ven: p=0.074324, q=0.099099
+- Fisher Ven+Mar: p=0.024693, q=0.078148
+- Fisher Jup+Sat: p=0.233631, q=0.233631
+- Fisher Mer+Ven+Mar+Jup+Sat+Ura+Nep: p=0.039074, q=0.078148
 - Surviving single-cycle flare rows at q<0.05: 0/16
 
 6. Existing multi-alignment outputs
 --------------------------------------------------
-  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SF_B-Class, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=161, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SF_C-Class, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=161, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SF_M-Class, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=116, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SF_Total, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=179, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SF_X-Class, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=5, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SG_Large, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=73, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SG_Medium, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=115, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SG_Small, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=169, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SG_Total, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=167, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SF_B-Class, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=160, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SF_C-Class, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=160, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SF_M-Class, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=117, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SF_Total, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=175, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SF_X-Class, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=5, N_q_lt_0p05=1, N_sig_fdr_true=1
+  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SG_Large, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=74, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SG_Medium, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=114, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SG_Small, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=168, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_pair_alignment_ceos.csv, Dataset=SG_Total, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=162, N_q_lt_0p05=0, N_sig_fdr_true=0
   Source_File=phase2_pair_alignment_ceos.csv, Dataset=SG_XLarge, N_Planets=2, N_Tests=2520, N_Raw_lt_0p05=8, N_q_lt_0p05=6, N_sig_fdr_true=6
-  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SF_B-Class, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=96, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SF_C-Class, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=380, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SF_M-Class, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=268, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SF_Total, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=458, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SF_B-Class, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=97, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SF_C-Class, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=373, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SF_M-Class, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=267, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SF_Total, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=455, N_q_lt_0p05=0, N_sig_fdr_true=0
   Source_File=phase2_triple_alignment_ceos.csv, Dataset=SF_X-Class, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=0, N_q_lt_0p05=0, N_sig_fdr_true=0
   Source_File=phase2_triple_alignment_ceos.csv, Dataset=SG_Large, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=84, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SG_Medium, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=197, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SG_Small, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=422, N_q_lt_0p05=0, N_sig_fdr_true=0
-  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SG_Total, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=346, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SG_Medium, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=200, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SG_Small, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=425, N_q_lt_0p05=0, N_sig_fdr_true=0
+  Source_File=phase2_triple_alignment_ceos.csv, Dataset=SG_Total, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=338, N_q_lt_0p05=0, N_sig_fdr_true=0
   Source_File=phase2_triple_alignment_ceos.csv, Dataset=SG_XLarge, N_Planets=3, N_Tests=8400, N_Raw_lt_0p05=0, N_q_lt_0p05=0, N_sig_fdr_true=0
 
 7. Table 2 latitude asymmetry (6 categories)
@@ -94,8 +94,8 @@ Family definitions
 8. Decay boundary (FDR across windows per file)
 --------------------------------------------------
 - sf_b_class_decay_boundary.csv: 50 windows  |  Conj raw<.05=0, q<.05=0  |  Opp raw<.05=0, q<.05=0
-- sf_c_class_decay_boundary.csv: 50 windows  |  Conj raw<.05=20, q<.05=12  |  Opp raw<.05=0, q<.05=0
-- sf_decay_boundary.csv: 50 windows  |  Conj raw<.05=25, q<.05=14  |  Opp raw<.05=0, q<.05=0
+- sf_c_class_decay_boundary.csv: 50 windows  |  Conj raw<.05=19, q<.05=12  |  Opp raw<.05=0, q<.05=0
+- sf_decay_boundary.csv: 50 windows  |  Conj raw<.05=24, q<.05=15  |  Opp raw<.05=0, q<.05=0
 - sf_m_class_decay_boundary.csv: 50 windows  |  Conj raw<.05=0, q<.05=0  |  Opp raw<.05=1, q<.05=0
 - sf_x_class_decay_boundary.csv: 50 windows  |  Conj raw<.05=0, q<.05=0  |  Opp raw<.05=0, q<.05=0
 - sg_decay_boundary.csv: 10 windows  |  Conj raw<.05=0, q<.05=0  |  Opp raw<.05=1, q<.05=0
@@ -104,4 +104,4 @@ Family definitions
 - sg_small_lt100_decay_boundary.csv: 10 windows  |  Conj raw<.05=0, q<.05=0  |  Opp raw<.05=0, q<.05=0
 - sg_xlarge_gt2000_decay_boundary.csv: 10 windows  |  Conj raw<.05=0, q<.05=0  |  Opp raw<.05=3, q<.05=0
 
-Output directory: /data/solar-ceos/202603二修版/results/05_multidimensional/fdr_audit
+Output directory: /home/bml/papers/00projects/001solar_ceos/results/05_multidimensional/fdr_audit

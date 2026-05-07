@@ -15,7 +15,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import math
 import pandas as pd
+from scipy.stats import chi2
 
 
 THIS_DIR = Path(__file__).resolve().parent
@@ -44,12 +46,22 @@ SC_TARGETS = [
 REF_WINDOW = 2
 
 
-def fisher_pvalue_4tests(pvals: list[float]) -> tuple[float, float]:
+def fisher_combined_pvalue(pvals: list[float]) -> tuple[float, float]:
+    """Fisher's combined probability test.
+
+    stat = -2 * sum(ln p_i),  stat ~ chi2(2k) under H0 with k independent p-values.
+    Uses scipy.stats.chi2.sf to support arbitrary k (previous hard-coded
+    polynomial only matched k=4, i.e. df=8).
+    """
+    assert len(pvals) >= 2, f"Fisher combination requires >=2 p-values, got {len(pvals)}"
     clipped = [max(min(float(p), 0.999999), 1e-12) for p in pvals]
-    stat = -2.0 * sum(__import__("math").log(p) for p in clipped)
-    x = stat / 2.0
-    survival = __import__("math").exp(-x) * (1.0 + x + x**2 / 2.0 + x**3 / 6.0)
+    stat = -2.0 * sum(math.log(p) for p in clipped)
+    survival = float(chi2.sf(stat, df=2 * len(clipped)))
     return stat, survival
+
+
+# Backwards-compatible alias (old name was specific to 4 tests)
+fisher_pvalue_4tests = fisher_combined_pvalue
 
 
 def build_solar_cycle_summary() -> pd.DataFrame:
