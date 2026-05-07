@@ -4,13 +4,6 @@ Solar CEOS（Celestial Event Occurrence Statistics，天体相位事件发生统
 
 本研究的主要对象包括黑子群、太阳耀斑、太阳周期分段、多行星组合扫描，以及稳健性和多重比较校正检验。
 
-## 仓库内容
-
-- `notebooks/`：数据预处理、统计分析、稳健性检验与绘图脚本
-- `notebooks/_style/figstyle.py`：统一绘图风格模块
-- `results/`：论文图表、源数据表和统计输出
-- `data/`：数据目录占位和少量可直接公开的小型数据
-
 ## 项目结构
 
 ```text
@@ -136,10 +129,6 @@ Solar CEOS（Celestial Event Occurrence Statistics，天体相位事件发生统
 - `results/04_asymmetric/sf/cache_data/`：耀斑计算缓存
 - `results/04_asymmetric/sg/cache_data/`：黑子群计算缓存
 
-`cache_data/` 下的 `.parquet`、`.npy`、`.pkl` 文件是运行缓存，体积较大，不建议提交到 GitHub。若只复现图表，可优先使用 `results/` 中已经保存的源数据表和 plot-only 脚本。
-
-审稿阶段请使用投稿材料中提供的匿名下载链接。论文和数据正式发布后，请从 Zenodo 下载完整数据归档，并以届时公布的 DOI 为准。
-
 ## 运行环境
 
 推荐使用 Python 3.13，并通过 Miniforge/Mamba 管理依赖。
@@ -196,9 +185,7 @@ save_dual(fig, "results/<dir>/FigNN_<name>.eps")
 |------|------|------|
 | v1 | 2025-12 | 初投稿版本，建立基础数据流程、CEOS 统计框架和初版论文图表 |
 | v2 | 2026-03 | 重构 notebook 与结果目录，新增多行星连珠检验和 BH-FDR 审计，补充 FDR q 值标注 |
-| v3 | 2026-05 | 重跑主要统计，使用稳定随机种子派生、Fisher 合并 p 值等，并统一图件风格和投稿版图表输出 |
-
-历史版本已用 Git 标签固定：`v1-submitted`、`v2-revision`、`v3-revision`。可在 GitHub 的 Tags 页面查看或下载对应版本源码包。当前 `main` 分支对应三修版整理状态。
+| v3 | 2026-05 | 重跑统计，使用稳定随机种子派生、Fisher 合并 p 值等，并统一图件风格和投稿版图表输出 |
 
 ## 许可
 
